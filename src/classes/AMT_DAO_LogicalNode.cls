@@ -4,17 +4,15 @@ public class AMT_DAO_LogicalNode implements AMT_DAO_Node{
 
 	private String expression;
 
-	public AMT_DAO_Node leftChild;
+	public AMT_DAO_Node leftChild {get;set;}
 
-	public AMT_DAO_Node rightChild;
-
+	public AMT_DAO_Node rightChild {get;set;}
 
 	public AMT_DAO_LogicalNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator) {
 		this.logicalOperator = operator;
 	}
 
-	public String evaluate(){
-		System.debug(this.getOperator().name().trim());
+	public String evaluate(){		
 		if(this.isNotNode()){
 			this.expression = evaluateForNotOperator();
 		}else{
