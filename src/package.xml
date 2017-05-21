@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>AMT_DAO_Node</members>
+		<members>AMT_DAO_LogicalNode</members>
+		<members>AMT_DAO_Expression</members>
+		<members>AMT_DAO_Operator</members>
+		<members>AMT_DAO_NodeException</members>
+		<members>AMT_DAO_ConditionNode</members>
+		<members>AMT_DAO_OperatorUtils</members>
+		<name>ApexClass</name>
+	</types>
+	<version>36.0</version>
+</Package>
