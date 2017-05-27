@@ -1,4 +1,4 @@
-public class AMT_DAO_ConditionNode implements AMT_DAO_Node{
+ public class AMT_DAO_ConditionNode implements AMT_DAO_Node{
 
 	private AMT_DAO_OperatorUtils.AMT_DAO_Operator conditionOperator;
 
@@ -8,10 +8,34 @@ public class AMT_DAO_ConditionNode implements AMT_DAO_Node{
 
 	private String expression;
 
-	public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,String value) {
+	public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName){
 		this.conditionOperator = operator;
 		this.leftArgument = fieldName;
+	}
+
+	public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,String value) {
+		this(operator,fieldName);
 		this.rightArgument = value;
+	}
+
+	public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Integer value) {
+		this(operator,fieldName);
+		this.rightArgument = String.valueOf(value);
+	}
+
+	public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Double value) {
+		this(operator,fieldName);
+		this.rightArgument = String.valueOf(value);
+	}
+
+	public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Long value) {
+		this(operator,fieldName);
+		this.rightArgument = String.valueOf(value);
+	}
+
+	public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Boolean value) {
+		this(operator,fieldName);
+		this.rightArgument = String.valueOf(value);
 	}
 
 	public String evaluate(){		

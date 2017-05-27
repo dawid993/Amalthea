@@ -61,10 +61,13 @@ public class AMT_DAO_LogicalNode implements AMT_DAO_Node{
 
 	private String evaluteForAndOrOperators(){
 		String operatorSign = AMT_DAO_OperatorUtils.operatorToSoqlSign.get(logicalOperator.name());
-		String leftChildEvaluate = this.leftChild.evaluate();
-		String rightChildEvaluate = this.rightChild.evaluate();
-
-		return '('+leftChildEvaluate+operatorSign+rightChildEvaluate+')';		
+		try{
+			String leftChildEvaluate = this.leftChild.evaluate();
+			String rightChildEvaluate = this.rightChild.evaluate();		
+			return '('+leftChildEvaluate+operatorSign+rightChildEvaluate+')';		
+		}catch(Exception ex){
+			throw new AMT_DAO_NodeException('Logical tree has inproper structure. Please check your statements.');
+		}
 	}
 
 	private Boolean isNotNode(){

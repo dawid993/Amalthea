@@ -38,4 +38,8 @@ public class AMT_DAO_TreeConditionBuilderManagerImp implements AMT_DAO_TreeCondi
 	public AMT_DAO_Node getRootNode(){
 		return rootNode;
 	}
+
+	public void flush(){
+		this.rootNode = null;
+	}
 }
