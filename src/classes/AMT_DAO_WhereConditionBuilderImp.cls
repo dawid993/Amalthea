@@ -15,43 +15,43 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 	}
 
 	private String listToString(List<String> inputValues){
-		String values;
+		String values='';
 		for(String s:inputValues){
 			values+=this.insertApostrophes(s)+',';
 		}
 
 		values = values.removeEnd(',');
-		return values;
+		return this.insertBrackets(values);
 	}
 
 	private String listToString(List<Integer> inputNumbers){
-		String values;
+		String values='';
 		for(Integer s:inputNumbers){
 			values+=s+',';
 		}
 
 		values = values.removeEnd(',');
-		return values;
+		return this.insertBrackets(values);
 	}
 
-	private String listToString(List<Double> inputDoubles){
-		String values;
-		for(Double s:inputDoubles){
+	private String listToString(List<Decimal> inputDecimals){
+		String values='';
+		for(Decimal s:inputDecimals){
 			values+=s+',';
 		}
 
 		values = values.removeEnd(',');
-		return values;
+		return this.insertBrackets(values);
 	}
 
 	private String listToString(List<Long> inputLongs){
-		String values;
+		String values='';
 		for(Long s:inputLongs){
 			values+=s+',';
 		}
 
 		values = values.removeEnd(',');
-		return values;
+		return this.insertBrackets(values);
 	}
 
 	private String insertApostrophes(String value){
@@ -92,7 +92,7 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeEq(String fieldName,Double value){
+	public AMT_DAO_ConditionBuilder makeEq(String fieldName,Decimal value){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EQ,fieldName,value);
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
 		return checkInsertion(isNodeInserted);
@@ -122,7 +122,7 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName,Double value){
+	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName,Decimal value){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EQ,fieldName,value);
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
 		return checkInsertion(isNodeInserted);
@@ -152,7 +152,7 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeLt(String fieldName,Double value){
+	public AMT_DAO_ConditionBuilder makeLt(String fieldName,Decimal value){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT,fieldName,value);
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
 		return checkInsertion(isNodeInserted);
@@ -176,7 +176,7 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,Double value){
+	public AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,Decimal value){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT_OR_EQ,fieldName,value);
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
 		return checkInsertion(isNodeInserted);
@@ -200,7 +200,7 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeGt(String fieldName,Double value){
+	public AMT_DAO_ConditionBuilder makeGt(String fieldName,Decimal value){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT,fieldName,value);
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
 		return checkInsertion(isNodeInserted);
@@ -224,7 +224,7 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return checkInsertion(isNodeInserted);
 	}	
 
-	public AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,Double value){
+	public AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,Decimal value){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT_OR_EQ,fieldName,value);
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
 		return checkInsertion(isNodeInserted);
@@ -254,7 +254,7 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeIn(String fieldName,List<Double> values){
+	public AMT_DAO_ConditionBuilder makeIn(String fieldName,List<Decimal> values){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.IN_EXP,fieldName,this.listToString(values));
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
 		return checkInsertion(isNodeInserted);

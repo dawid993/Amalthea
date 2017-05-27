@@ -12,7 +12,7 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeEq(String fieldName,Integer value);
 
-	AMT_DAO_ConditionBuilder makeEq(String fieldName,Double value);
+	AMT_DAO_ConditionBuilder makeEq(String fieldName,Decimal value);
 
 	AMT_DAO_ConditionBuilder makeEq(String fieldName,Long value);
 
@@ -22,7 +22,7 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeNotEq(String fieldName,Integer value);
 
-	AMT_DAO_ConditionBuilder makeNotEq(String fieldName,Double value);
+	AMT_DAO_ConditionBuilder makeNotEq(String fieldName,Decimal value);
 
 	AMT_DAO_ConditionBuilder makeNotEq(String fieldName,Long value);
 
@@ -32,7 +32,7 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeLt(String fieldName,Integer value);
 
-	AMT_DAO_ConditionBuilder makeLt(String fieldName,Double value);
+	AMT_DAO_ConditionBuilder makeLt(String fieldName,Decimal value);
 
 	AMT_DAO_ConditionBuilder makeLt(String fieldName,Long value);
 
@@ -40,7 +40,7 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeGt(String fieldName,Integer value);
 
-	AMT_DAO_ConditionBuilder makeGt(String fieldName,Double value);
+	AMT_DAO_ConditionBuilder makeGt(String fieldName,Decimal value);
 
 	AMT_DAO_ConditionBuilder makeGt(String fieldName,Long value);
 
@@ -48,7 +48,7 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,Integer value);
 
-	AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,Double value);
+	AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,Decimal value);
 
 	AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,Long value);
 
@@ -56,7 +56,7 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,Integer value);
 
-	AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,Double value);
+	AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,Decimal value);
 
 	AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,Long value);
 

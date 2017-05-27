@@ -26,7 +26,7 @@ public class AMT_DAO_OperatorUtils {
 		'GT' => ' > ',
 		'LT' => ' < ',
 		'LT_OR_EQ' => ' <=',
-		'GT_OR_EQ' => '>=',
+		'GT_OR_EQ' => ' >= ',
 		'LIKE_EXP' => ' LIKE ',
 		'IN_EXP' => ' IN ',
 		'NOT_IN' => ' NOT IN ',

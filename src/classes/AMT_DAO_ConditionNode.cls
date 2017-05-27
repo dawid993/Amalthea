@@ -23,7 +23,7 @@
 		this.rightArgument = String.valueOf(value);
 	}
 
-	public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Double value) {
+	public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Decimal value) {
 		this(operator,fieldName);
 		this.rightArgument = String.valueOf(value);
 	}
