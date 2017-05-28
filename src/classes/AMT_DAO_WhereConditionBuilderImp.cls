@@ -1,4 +1,6 @@
 public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilder{
+
+	public static final String DEFAULT_TIME_ZONE = 'GMT';
 	
 	private AMT_DAO_TreeConditionBuilderManager treeManager;
 
@@ -62,6 +64,10 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return '('+value+')';
 	}
 
+	public String evaluate(){
+		return treeManager.getRootNode().evaluate();
+	}
+
 	public AMT_DAO_ConditionBuilder makeAnd(){
 		AMT_DAO_Node node = new AMT_DAO_LogicalNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.AND_EXP);
 		this.treeManager.addNode(node,this.treeManager.getRootNode());
@@ -82,6 +88,21 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 
 	public AMT_DAO_ConditionBuilder makeEq(String fieldName,String value){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EQ,fieldName,this.insertApostrophes(value));
+		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
+		return checkInsertion(isNodeInserted);
+	}
+
+	public AMT_DAO_ConditionBuilder makeEq(String fieldName,DateTime value,String timeZone){
+		timeZone = timeZone == null ? DEFAULT_TIME_ZONE : timeZone;
+		String dateTimeLiteral = value.format('yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'',timeZone);
+		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EQ,fieldName,dateTimeLiteral);
+		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
+		return checkInsertion(isNodeInserted);
+	}
+
+	public AMT_DAO_ConditionBuilder makeEq(String fieldName,Date value){		
+		String dateTimeLiteral = value.format();
+		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EQ,fieldName,dateTimeLiteral);
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
 		return checkInsertion(isNodeInserted);
 	}
@@ -188,6 +209,14 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return checkInsertion(isNodeInserted);
 	}
 
+	public AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,DateTime value,String timeZone){
+		timeZone = timeZone == null ? DEFAULT_TIME_ZONE : timeZone;
+		String dateTimeLiteral = value.format('yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'',timeZone);
+		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT_OR_EQ,fieldName,dateTimeLiteral);
+		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
+		return checkInsertion(isNodeInserted);
+	}
+
 	public AMT_DAO_ConditionBuilder makeGt(String fieldName,String value){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT,fieldName,this.insertApostrophes(value));
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
@@ -236,6 +265,14 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return checkInsertion(isNodeInserted);
 	}	
 
+	public AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,DateTime value,String timeZone){
+		timeZone = timeZone == null ? DEFAULT_TIME_ZONE : timeZone;
+		String dateTimeLiteral = value.format('yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'',timeZone);
+		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT_OR_EQ,fieldName,dateTimeLiteral);
+		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
+		return checkInsertion(isNodeInserted);
+	}
+
 	public AMT_DAO_ConditionBuilder makeLike(String fieldName,String value){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LIKE_EXP,fieldName,this.insertApostrophes(value));
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
@@ -264,9 +301,5 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EXCLUDES_EXP,fieldName,this.listToString(values));
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
 		return checkInsertion(isNodeInserted);
-	}
-
-	public String evaluate(){
-		return treeManager.getRootNode().evaluate();
 	}
 }
