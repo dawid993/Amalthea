@@ -64,6 +64,8 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeIn(String fieldName,List<String> values);
 
+	AMT_DAO_ConditionBuilder makeNotIn(String fieldName,List<String> values);
+
 	AMT_DAO_ConditionBuilder makeIncludes(String fieldName,List<String> value);
 
 	AMT_DAO_ConditionBuilder makeExcludes(String fieldName,List<String> value);

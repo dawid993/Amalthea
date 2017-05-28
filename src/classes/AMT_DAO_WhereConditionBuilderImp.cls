@@ -111,7 +111,7 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 	}
 
 	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName,String value){
-		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EQ,fieldName,value);
+		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EQ,fieldName,this.insertApostrophes(value));
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
 		return checkInsertion(isNodeInserted);
 	}
@@ -248,24 +248,12 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeIn(String fieldName,List<Integer> values){
-		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.IN_EXP,fieldName,this.listToString(values));
+	public AMT_DAO_ConditionBuilder makeNotIn(String fieldName,List<String> values){
+		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_IN,fieldName,this.listToString(values));
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
 		return checkInsertion(isNodeInserted);
 	}
-
-	public AMT_DAO_ConditionBuilder makeIn(String fieldName,List<Decimal> values){
-		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.IN_EXP,fieldName,this.listToString(values));
-		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
-		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeIn(String fieldName,List<Long> values){
-		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.IN_EXP,fieldName,this.listToString(values));
-		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
-		return checkInsertion(isNodeInserted);
-	}
-
+	
 	public AMT_DAO_ConditionBuilder makeIncludes(String fieldName,List<String> values){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.INCLUDES_EXP,fieldName,this.listToString(values));
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
