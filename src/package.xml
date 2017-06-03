@@ -12,6 +12,7 @@
 		<members>AMT_DAO_WhereConditionBuilderImp</members>
 		<members>AMT_DAO_TreeConditionBuilderManager</members>
 		<members>AMT_DAO_TreeConditionBuilderManagerImp</members>
+		<members>AMT_DAO_DateLiterals</members>
 		<name>ApexClass</name>
 	</types>
 	<version>36.0</version>

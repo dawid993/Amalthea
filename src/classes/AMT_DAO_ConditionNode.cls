@@ -38,6 +38,11 @@
 		this.rightArgument = String.valueOf(value);
 	}
 
+	public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Date value) {
+		this(operator,fieldName);
+		this.rightArgument = String.valueOf(value);
+	}
+
 	public String evaluate(){		
 		String operatorSign = AMT_DAO_OperatorUtils.operatorToSoqlSign.get(conditionOperator.name());
 		this.expression = '('+leftArgument+operatorSign+rightArgument+')';

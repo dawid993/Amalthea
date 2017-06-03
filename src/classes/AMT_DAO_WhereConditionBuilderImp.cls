@@ -131,6 +131,16 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return checkInsertion(isNodeInserted);
 	}
 
+	public AMT_DAO_ConditionBuilder makeEq(String fieldName, AMT_DAO_DateLiterals literalValue, Integer value){
+		String literal = literalValue.name();
+		if(literal.contains('_n') && value != null){
+			literal = literal.replace('_n', ':'+value);
+		}
+		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EQ,fieldName,literal);
+		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
+		return checkInsertion(isNodeInserted);
+	}
+
 	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName,String value){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EQ,fieldName,this.insertApostrophes(value));
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
@@ -161,6 +171,18 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return checkInsertion(isNodeInserted);
 	}
 
+	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName,DateTime value,String timeZone){
+		timeZone = timeZone == null ? DEFAULT_TIME_ZONE : timeZone;
+		String dateTimeLiteral = value.format('yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'',timeZone);
+		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EQ,fieldName,dateTimeLiteral);
+		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
+		return checkInsertion(isNodeInserted);
+	}
+
+	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName, AMT_DAO_DateLiterals literalValue, Integer value){
+		return null;
+	}
+
 	public AMT_DAO_ConditionBuilder makeLt(String fieldName,String value){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT,fieldName,this.insertApostrophes(value));
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
@@ -183,6 +205,18 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT,fieldName,value);
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
 		return checkInsertion(isNodeInserted);
+	}
+
+	public AMT_DAO_ConditionBuilder makeLt(String fieldName,DateTime value,String timeZone){
+		timeZone = timeZone == null ? DEFAULT_TIME_ZONE : timeZone;
+		String dateTimeLiteral = value.format('yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'',timeZone);
+		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT,fieldName,dateTimeLiteral);
+		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
+		return checkInsertion(isNodeInserted);
+	}
+
+	public AMT_DAO_ConditionBuilder makeLt(String fieldName, AMT_DAO_DateLiterals literalValue, Integer value){
+		return null;
 	}
 
 	public AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,String value){
@@ -217,6 +251,10 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return checkInsertion(isNodeInserted);
 	}
 
+	public AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName, AMT_DAO_DateLiterals literalValue, Integer value){
+		return null;
+	}
+
 	public AMT_DAO_ConditionBuilder makeGt(String fieldName,String value){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT,fieldName,this.insertApostrophes(value));
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
@@ -239,6 +277,18 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT,fieldName,value);
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
 		return checkInsertion(isNodeInserted);
+	}
+
+		public AMT_DAO_ConditionBuilder makeGt(String fieldName,DateTime value,String timeZone){
+		timeZone = timeZone == null ? DEFAULT_TIME_ZONE : timeZone;
+		String dateTimeLiteral = value.format('yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'',timeZone);
+		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT,fieldName,dateTimeLiteral);
+		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
+		return checkInsertion(isNodeInserted);
+	}
+
+	public AMT_DAO_ConditionBuilder makeGt(String fieldName, AMT_DAO_DateLiterals literalValue, Integer value){
+		return null;
 	}
 
 	public AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,String value){
@@ -273,6 +323,10 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return checkInsertion(isNodeInserted);
 	}
 
+	public AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName, AMT_DAO_DateLiterals literalValue, Integer value){
+		return null;
+	}
+
 	public AMT_DAO_ConditionBuilder makeLike(String fieldName,String value){
 		AMT_DAO_Node node = new AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LIKE_EXP,fieldName,this.insertApostrophes(value));
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
@@ -302,4 +356,5 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		Boolean isNodeInserted = this.treeManager.addNode(node,this.treeManager.getRootNode());	
 		return checkInsertion(isNodeInserted);
 	}
+	
 }
