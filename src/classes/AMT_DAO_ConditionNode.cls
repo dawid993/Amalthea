@@ -9,6 +9,9 @@
 	private String expression;
 
 	public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName){
+		if(operator == null || String.isBlank(fieldName)){
+			throw new AMT_DAO_NodeException('Node can not be created because key parameters are not initialized!');
+		}
 		this.conditionOperator = operator;
 		this.leftArgument = fieldName;
 	}

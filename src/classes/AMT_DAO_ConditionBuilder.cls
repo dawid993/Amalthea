@@ -20,8 +20,6 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeEq(String fieldName,DateTime value,String timeZone);
 
-	AMT_DAO_ConditionBuilder makeEq(String fieldName,Date value);
-
 	AMT_DAO_ConditionBuilder makeEq(String fieldName,AMT_DAO_DateLiterals literalValue,Integer value);
 
 	AMT_DAO_ConditionBuilder makeNotEq(String fieldName,String value);
@@ -90,7 +88,19 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeIn(String fieldName,List<String> values);
 
+	AMT_DAO_ConditionBuilder makeIn(String fieldName,List<Integer> values);
+
+	AMT_DAO_ConditionBuilder makeIn(String fieldName,List<Decimal> values);
+
+	AMT_DAO_ConditionBuilder makeIn(String fieldName,List<Long> values);
+
 	AMT_DAO_ConditionBuilder makeNotIn(String fieldName,List<String> values);
+
+	AMT_DAO_ConditionBuilder makeNotIn(String fieldName,List<Integer> values);
+
+	AMT_DAO_ConditionBuilder makeNotIn(String fieldName,List<Decimal> values);
+
+	AMT_DAO_ConditionBuilder makeNotIn(String fieldName,List<Long> values);
 
 	AMT_DAO_ConditionBuilder makeIncludes(String fieldName,List<String> value);
 
