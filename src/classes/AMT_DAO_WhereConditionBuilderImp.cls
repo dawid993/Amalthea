@@ -50,7 +50,7 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,literal));
 	}	
 
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,AMT_DAO_DateFunction value,Object additionalValue){
+	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,AMT_DAO_DateFunction value,Object additionalValue){
 		String dateFunction = value.evaluate();
 		return this.insertNode(new AMT_DAO_ConditionNode(operator,dateFunction,additionalValue));
 	}
@@ -92,8 +92,8 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeEq(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EQ,fieldName,dateFunction,additionalValue);
+	public AMT_DAO_ConditionBuilder makeEq(AMT_DAO_DateFunction dateFunction,Object additionalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EQ,dateFunction,additionalValue);
 		return checkInsertion(isNodeInserted);
 	}
 	
@@ -122,8 +122,8 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EQ,fieldName,dateFunction,additionalValue);
+	public AMT_DAO_ConditionBuilder makeNotEq(AMT_DAO_DateFunction dateFunction,Object additionalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EQ,dateFunction,additionalValue);
 		return checkInsertion(isNodeInserted);
 	}
 
@@ -147,8 +147,8 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeLt(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT,fieldName,dateFunction,additionalValue);
+	public AMT_DAO_ConditionBuilder makeLt(AMT_DAO_DateFunction dateFunction,Object additionalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT,dateFunction,additionalValue);
 		return checkInsertion(isNodeInserted);
 	}
 
@@ -172,8 +172,8 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT_OR_EQ,fieldName,dateFunction,additionalValue);
+	public AMT_DAO_ConditionBuilder makeLtOrEq(AMT_DAO_DateFunction dateFunction,Object additionalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT_OR_EQ,dateFunction,additionalValue);
 		return checkInsertion(isNodeInserted);
 	}
 
@@ -197,8 +197,8 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeGt(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT,fieldName,dateFunction,additionalValue);
+	public AMT_DAO_ConditionBuilder makeGt(AMT_DAO_DateFunction dateFunction,Object additionalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT,dateFunction,additionalValue);
 		return checkInsertion(isNodeInserted);
 	}
 
@@ -222,8 +222,8 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT_OR_EQ,fieldName,dateFunction,additionalValue);
+	public AMT_DAO_ConditionBuilder makeGtOrEq(AMT_DAO_DateFunction dateFunction,Object additionalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT_OR_EQ,dateFunction,additionalValue);
 		return checkInsertion(isNodeInserted);
 	}
 

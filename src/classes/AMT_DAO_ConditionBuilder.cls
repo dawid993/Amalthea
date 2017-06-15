@@ -16,7 +16,7 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeEq(String fieldName,AMT_DAO_DateLiterals literalValue);
 
-	AMT_DAO_ConditionBuilder makeEq(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue);
+	AMT_DAO_ConditionBuilder makeEq(AMT_DAO_DateFunction dateFunction,Object additionalValue);
 
 	AMT_DAO_ConditionBuilder makeNotEq(String fieldName,String value);
 
@@ -26,7 +26,7 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeNotEq(String fieldName,AMT_DAO_DateLiterals literalValue);
 
-	AMT_DAO_ConditionBuilder makeNotEq(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue);
+	AMT_DAO_ConditionBuilder makeNotEq(AMT_DAO_DateFunction dateFunction,Object additionalValue);
 
 	AMT_DAO_ConditionBuilder makeLt(String fieldName,String value);
 
@@ -36,7 +36,7 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeLt(String fieldName,AMT_DAO_DateLiterals literalValue);
 
-	AMT_DAO_ConditionBuilder makeLt(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue);
+	AMT_DAO_ConditionBuilder makeLt(AMT_DAO_DateFunction dateFunction,Object additionalValue);
 
 	AMT_DAO_ConditionBuilder makeGt(String fieldName,String value);
 
@@ -46,7 +46,7 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeGt(String fieldName,AMT_DAO_DateLiterals literalValue);
 
-	AMT_DAO_ConditionBuilder makeGt(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue);
+	AMT_DAO_ConditionBuilder makeGt(AMT_DAO_DateFunction dateFunction,Object additionalValue);
 
 	AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,String value);
 
@@ -56,7 +56,7 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,AMT_DAO_DateLiterals literalValue);
 
-	AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue);
+	AMT_DAO_ConditionBuilder makeLtOrEq(AMT_DAO_DateFunction dateFunction,Object additionalValue);
 
 	AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,String value);
 
@@ -66,7 +66,7 @@ public interface AMT_DAO_ConditionBuilder {
 
 	AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,AMT_DAO_DateLiterals literalValue);
 
-	AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue);
+	AMT_DAO_ConditionBuilder makeGtOrEq(AMT_DAO_DateFunction dateFunction,Object additionalValue);
 
 	AMT_DAO_ConditionBuilder makeLike(String fieldName,String value);
 
