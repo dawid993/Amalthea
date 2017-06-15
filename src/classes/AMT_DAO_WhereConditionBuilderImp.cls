@@ -27,48 +27,33 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 			value == AMT_DAO_UTL_DaoUtils.NULL_VALUE ? value : AMT_DAO_UTL_DaoUtils.insertApostrophes(value)));
 	}
 
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Integer value){
+	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Object value){
 		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,value));
-	}
-
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Decimal value){
-		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,value));
-	}
-
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Long value){
-		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,value));
-	}
-
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Boolean value){
-		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,value));
-	}
+	}	
 
 	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,List<String> value){
 		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,AMT_DAO_UTL_DaoUtils.listToString(value)));
 	}
 
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,List<Integer> value){
+	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,List<Object> value){
 		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,AMT_DAO_UTL_DaoUtils.listToString(value)));
 	}
-
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,List<Decimal> value){
-		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,AMT_DAO_UTL_DaoUtils.listToString(value)));
-	}
-
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,List<Long> value){
-		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,AMT_DAO_UTL_DaoUtils.listToString(value)));
-	}
-
+	
 	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,DateTime value,String timeZone){
 		timeZone = timeZone == null ? AMT_DAO_UTL_DaoUtils.DEFAULT_TIME_ZONE : timeZone;
 		String dateTimeLiteral = value.format('yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'',timeZone);
 		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,dateTimeLiteral));
 	}
 
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,AMT_DAO_DateLiterals value,Integer additionalValue){	
-		String literal = AMT_DAO_UTL_DaoUtils.dateLiteralToString(value,additionalValue);
+	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,AMT_DAO_DateLiterals value){	
+		String literal = value.evaluate();
 		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,literal));
 	}	
+
+	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,AMT_DAO_DateFunction value,Object additionalValue){
+		String dateFunction = value.evaluate();
+		return this.insertNode(new AMT_DAO_ConditionNode(operator,dateFunction,additionalValue));
+	}
 
 	public String evaluate(){
 		return treeManager.getRootNode().evaluate();
@@ -102,28 +87,18 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}	
 
-	public AMT_DAO_ConditionBuilder makeEq(String fieldName,Integer value){
+	public AMT_DAO_ConditionBuilder makeEq(String fieldName,Object value){
 		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EQ,fieldName,value);
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeEq(String fieldName,Decimal value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EQ,fieldName,value);
+	public AMT_DAO_ConditionBuilder makeEq(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EQ,fieldName,dateFunction,additionalValue);
 		return checkInsertion(isNodeInserted);
 	}
-
-	public AMT_DAO_ConditionBuilder makeEq(String fieldName,Long value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EQ,fieldName,value);
-		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeEq(String fieldName,Boolean value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EQ,fieldName,value);	
-		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeEq(String fieldName, AMT_DAO_DateLiterals literalValue, Integer value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EQ,fieldName,literalValue,value);
+	
+	public AMT_DAO_ConditionBuilder makeEq(String fieldName, AMT_DAO_DateLiterals literalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.EQ,fieldName,literalValue);
 		return checkInsertion(isNodeInserted);
 	}
 
@@ -132,22 +107,7 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName,Integer value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EQ,fieldName,value);	
-		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName,Decimal value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EQ,fieldName,value);	
-		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName,Long value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EQ,fieldName,value);	
-		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName,Boolean value){
+	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName,Object value){
 		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EQ,fieldName,value);	
 		return checkInsertion(isNodeInserted);
 	}
@@ -157,8 +117,13 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName, AMT_DAO_DateLiterals literalValue, Integer value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EQ,fieldName,literalValue,value);
+	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName, AMT_DAO_DateLiterals literalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EQ,fieldName,literalValue);
+		return checkInsertion(isNodeInserted);
+	}
+
+	public AMT_DAO_ConditionBuilder makeNotEq(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EQ,fieldName,dateFunction,additionalValue);
 		return checkInsertion(isNodeInserted);
 	}
 
@@ -167,28 +132,23 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeLt(String fieldName,Integer value){
+	public AMT_DAO_ConditionBuilder makeLt(String fieldName,Object value){
 		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT,fieldName,value);
 		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeLt(String fieldName,Decimal value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT,fieldName,value);
-		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeLt(String fieldName,Long value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT,fieldName,value);
-		return checkInsertion(isNodeInserted);
-	}
+	}	
 
 	public AMT_DAO_ConditionBuilder makeLt(String fieldName,DateTime value,String timeZone){
 		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT,fieldName,value,timeZone);
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeLt(String fieldName, AMT_DAO_DateLiterals literalValue, Integer value){
-			Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT,fieldName,literalValue,value);
+	public AMT_DAO_ConditionBuilder makeLt(String fieldName, AMT_DAO_DateLiterals literalValue){
+			Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT,fieldName,literalValue);
+		return checkInsertion(isNodeInserted);
+	}
+
+	public AMT_DAO_ConditionBuilder makeLt(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT,fieldName,dateFunction,additionalValue);
 		return checkInsertion(isNodeInserted);
 	}
 
@@ -197,28 +157,23 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,Integer value){
+	public AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,Object value){
 		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT_OR_EQ,fieldName,value);
 		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,Decimal value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT_OR_EQ,fieldName,value);
-		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,Long value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT_OR_EQ,fieldName,value);
-		return checkInsertion(isNodeInserted);
-	}
+	}	
 
 	public AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,DateTime value,String timeZone){
 		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT_OR_EQ,fieldName,value,timeZone);
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName, AMT_DAO_DateLiterals literalValue, Integer value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT_OR_EQ,fieldName,literalValue,value);
+	public AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName, AMT_DAO_DateLiterals literalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT_OR_EQ,fieldName,literalValue);
+		return checkInsertion(isNodeInserted);
+	}
+
+	public AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.LT_OR_EQ,fieldName,dateFunction,additionalValue);
 		return checkInsertion(isNodeInserted);
 	}
 
@@ -227,28 +182,23 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeGt(String fieldName,Integer value){
+	public AMT_DAO_ConditionBuilder makeGt(String fieldName,Object value){
 		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT,fieldName,value);
 		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeGt(String fieldName,Decimal value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT,fieldName,value);
-		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeGt(String fieldName,Long value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT,fieldName,value);
-		return checkInsertion(isNodeInserted);
-	}
+	}	
 
 	public AMT_DAO_ConditionBuilder makeGt(String fieldName,DateTime value,String timeZone){
 		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT,fieldName,value,timeZone);
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeGt(String fieldName, AMT_DAO_DateLiterals literalValue, Integer value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT,fieldName,literalValue,value);
+	public AMT_DAO_ConditionBuilder makeGt(String fieldName, AMT_DAO_DateLiterals literalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT,fieldName,literalValue);
+		return checkInsertion(isNodeInserted);
+	}
+
+	public AMT_DAO_ConditionBuilder makeGt(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT,fieldName,dateFunction,additionalValue);
 		return checkInsertion(isNodeInserted);
 	}
 
@@ -257,28 +207,23 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,Integer value){
+	public AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,Object value){
 		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT_OR_EQ,fieldName,value);
 		return checkInsertion(isNodeInserted);
 	}	
-
-	public AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,Decimal value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT_OR_EQ,fieldName,value);
-		return checkInsertion(isNodeInserted);
-	}	
-
-	public AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,Long value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT_OR_EQ,fieldName,value);
-		return checkInsertion(isNodeInserted);
-	}	
-
+	
 	public AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,DateTime value,String timeZone){
 		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT_OR_EQ,fieldName,value,timeZone);
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName, AMT_DAO_DateLiterals literalValue, Integer value){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT_OR_EQ,fieldName,value);
+	public AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName, AMT_DAO_DateLiterals literalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT_OR_EQ,fieldName,literalValue);
+		return checkInsertion(isNodeInserted);
+	}
+
+	public AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,AMT_DAO_DateFunction dateFunction,Object additionalValue){
+		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.GT_OR_EQ,fieldName,dateFunction,additionalValue);
 		return checkInsertion(isNodeInserted);
 	}
 
@@ -292,17 +237,7 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeIn(String fieldName,List<Integer> values){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.IN_EXP,fieldName,values);
-		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeIn(String fieldName,List<Decimal> values){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.IN_EXP,fieldName,values);
-		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeIn(String fieldName,List<Long> values){
+	public AMT_DAO_ConditionBuilder makeIn(String fieldName,List<Object> values){
 		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.IN_EXP,fieldName,values);
 		return checkInsertion(isNodeInserted);
 	}
@@ -312,20 +247,10 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		return checkInsertion(isNodeInserted);
 	}
 
-	public AMT_DAO_ConditionBuilder makeNotIn(String fieldName,List<Integer> values){
+	public AMT_DAO_ConditionBuilder makeNotIn(String fieldName,List<Object> values){
 		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_IN,fieldName,values);
 		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeNotIn(String fieldName,List<Decimal> values){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_IN,fieldName,values);
-		return checkInsertion(isNodeInserted);
-	}
-
-	public AMT_DAO_ConditionBuilder makeNotIn(String fieldName,List<Long> values){
-		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_IN,fieldName,values);
-		return checkInsertion(isNodeInserted);
-	}
+	}	
 	
 	public AMT_DAO_ConditionBuilder makeIncludes(String fieldName,List<String> values){
 		Boolean isNodeInserted = this.preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator.INCLUDES_EXP,fieldName,values);

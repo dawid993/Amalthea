@@ -14,6 +14,7 @@
 		<members>AMT_DAO_TreeConditionBuilderManagerImp</members>
 		<members>AMT_DAO_DateLiterals</members>
 		<members>AMT_DAO_UTL_DaoUtils</members>
+		<members>AMT_DAO_DateFunction</members>
 		<name>ApexClass</name>
 	</types>
 	<version>36.0</version>

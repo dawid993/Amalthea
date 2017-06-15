@@ -16,37 +16,7 @@
 		this.leftArgument = fieldName;
 		this.rightArgument = String.valueOf(value);
 	}
-
-	//public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,String value) {
-	//	this(operator,fieldName);
-	//	this.rightArgument = value;
-	//}
-
-	//public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Integer value) {
-	//	this(operator,fieldName);
-	//	this.rightArgument = String.valueOf(value);
-	//}
-
-	//public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Decimal value) {
-	//	this(operator,fieldName);
-	//	this.rightArgument = String.valueOf(value);
-	//}
-
-	//public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Long value) {
-	//	this(operator,fieldName);
-	//	this.rightArgument = String.valueOf(value);
-	//}
-
-	//public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Boolean value) {
-	//	this(operator,fieldName);
-	//	this.rightArgument = String.valueOf(value);
-	//}
-
-	//public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Date value) {
-	//	this(operator,fieldName);
-	//	this.rightArgument = String.valueOf(value);
-	//}
-
+	
 	public String evaluate(){		
 		String operatorSign = AMT_DAO_OperatorUtils.operatorToSoqlSign.get(conditionOperator.name());
 		this.expression = '('+leftArgument+operatorSign+rightArgument+')';

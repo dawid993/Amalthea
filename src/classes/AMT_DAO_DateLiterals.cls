@@ -1,4 +1,19 @@
-public enum AMT_DAO_DateLiterals {	
+public class AMT_DAO_DateLiterals {	
+
+	public DateLiterals literal {get;set;}
+
+	public Integer value{get;set;}
+
+	public AMT_DAO_DateLiterals(DateLiterals literal,Integer value){
+		this.literal = literal;
+		this.value = value;
+	}
+
+	public String evaluate(){
+		return AMT_DAO_UTL_DaoUtils.dateLiteralToString(this,this.value);
+	}
+
+	public enum DateLiterals{
 		YESTERDAY,
 		TODAY,
 		TOMORROW,
@@ -31,5 +46,8 @@ public enum AMT_DAO_DateLiterals {
 		NEXT_FISCAL_QUARTER,	
 		THIS_FISCAL_YEAR,
 		LAST_FISCAL_YEAR,
-		NEXT_FISCAL_YEAR		
+		NEXT_FISCAL_YEAR	
+	}
+
+
 }

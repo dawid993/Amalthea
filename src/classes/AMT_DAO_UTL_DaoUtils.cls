@@ -16,42 +16,22 @@ public class AMT_DAO_UTL_DaoUtils {
 		return AMT_DAO_UTL_DaoUtils.insertBrackets(values);
 	}
 
-	public static String listToString(List<Integer> inputNumbers){
+	public static String listToString(List<Object> inputValues){
 		String values='';
-		for(Integer s:inputNumbers){
-			values+=s+',';
+		for(Object s:inputValues){
+			values+=String.valueOf(s)+',';
 		}
 
 		values = values.removeEnd(',');
 		return AMT_DAO_UTL_DaoUtils.insertBrackets(values);
-	}
-
-	public static String listToString(List<Decimal> inputDecimals){
-		String values='';
-		for(Decimal s:inputDecimals){
-			values+=s+',';
-		}
-
-		values = values.removeEnd(',');
-		return AMT_DAO_UTL_DaoUtils.insertBrackets(values);
-	}
-
-	public static String listToString(List<Long> inputLongs){
-		String values='';
-		for(Long s:inputLongs){
-			values+=s+',';
-		}
-
-		values = values.removeEnd(',');
-		return AMT_DAO_UTL_DaoUtils.insertBrackets(values);
-	}
+	}	
 
 	public static String dateLiteralToString(AMT_DAO_DateLiterals literal,Integer value){
 		if(literal == null ||
-			 (value == null && literal.name().contains(DATE_LITERALS_SUB_SIGN))){
+			 (value == null && literal.literal.name().contains(DATE_LITERALS_SUB_SIGN))){
 			throw new AMT_DAO_NodeException('Can not create Date Literal expression. Passed parameters are null!');
 		}else{
-			String stringLiteral = literal.name();
+			String stringLiteral = literal.literal.name();
 			if(stringLiteral.contains(DATE_LITERALS_SUB_SIGN)){
 				stringLiteral = stringLiteral.replace(DATE_LITERALS_SUB_SIGN, ':'+value);
 			}
