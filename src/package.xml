@@ -15,6 +15,7 @@
 		<members>AMT_DAO_DateLiterals</members>
 		<members>AMT_DAO_UTL_DaoUtils</members>
 		<members>AMT_DAO_DateFunction</members>
+		<members>AMT_DAO_WhereConditionBuilderTest</members>
 		<name>ApexClass</name>
 	</types>
 	<version>36.0</version>
