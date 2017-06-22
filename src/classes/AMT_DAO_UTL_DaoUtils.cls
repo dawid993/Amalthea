@@ -6,6 +6,8 @@ public class AMT_DAO_UTL_DaoUtils {
 
 	public static final String NULL_VALUE = 'null';
 
+	public static final String DATE_TIME_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'';
+
 	public static String listToString(List<String> inputValues){
 		String values='';
 		for(String s:inputValues){

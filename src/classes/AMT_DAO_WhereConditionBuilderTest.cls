@@ -694,9 +694,6 @@ public class AMT_DAO_WhereConditionBuilderTest {
 		System.assertEquals(expectedOut,conditionBuilder.evaluate());		
 	}
 
-
-
-
 	@isTest 
 	public static void LtorEqStringSyntaxtTest(){
 		String expectedOut = '(Name <= \'Test Name\')';

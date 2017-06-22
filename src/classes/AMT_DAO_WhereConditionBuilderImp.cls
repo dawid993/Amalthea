@@ -1,4 +1,4 @@
-public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilder{
+public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilder{
 	
 	private AMT_DAO_TreeConditionBuilderManager treeManager;
 
@@ -22,35 +22,35 @@ public virtual class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_Conditi
 		}
 	}
 
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,String value){		
+	private Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,String value){		
 		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,
 			value == AMT_DAO_UTL_DaoUtils.NULL_VALUE ? value : AMT_DAO_UTL_DaoUtils.insertApostrophes(value)));
 	}
 
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Object value){
+	private Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Object value){
 		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,value));
 	}	
 
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,List<String> value){
+	private Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,List<String> value){
 		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,AMT_DAO_UTL_DaoUtils.listToString(value)));
 	}
 
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,List<Object> value){
+	private Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,List<Object> value){
 		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,AMT_DAO_UTL_DaoUtils.listToString(value)));
 	}
 	
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,DateTime value,String timeZone){
+	private Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,DateTime value,String timeZone){
 		timeZone = timeZone == null ? AMT_DAO_UTL_DaoUtils.DEFAULT_TIME_ZONE : timeZone;
-		String dateTimeLiteral = value.format('yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'',timeZone);
+		String dateTimeLiteral = value.format(AMT_DAO_UTL_DaoUtils.DATE_TIME_FORMAT,timeZone);
 		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,dateTimeLiteral));
 	}
 
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,AMT_DAO_DateLiterals value){	
+	private Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,AMT_DAO_DateLiterals value){	
 		String literal = value.evaluate();
 		return this.insertNode(new AMT_DAO_ConditionNode(operator,fieldName,literal));
 	}	
 
-	protected virtual Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,AMT_DAO_DateFunction value,Object additionalValue){
+	private Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,AMT_DAO_DateFunction value,Object additionalValue){
 		String dateFunction = value.evaluate();
 		return this.insertNode(new AMT_DAO_ConditionNode(operator,dateFunction,additionalValue));
 	}
