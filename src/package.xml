@@ -8,7 +8,12 @@
 		<members>AMT_DAO_NodeException</members>
 		<members>AMT_DAO_ConditionNode</members>
 		<members>AMT_DAO_OperatorUtils</members>
+		<members>EE_SRV_TimeSheetCreator</members>
 		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>TimeSheet__c</members>
+		<name>CustomObject</name>
 	</types>
 	<version>36.0</version>
 </Package>
