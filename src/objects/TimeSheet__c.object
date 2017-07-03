@@ -56,6 +56,18 @@
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <fields>
+        <fullName>ConnectedTimeSheet__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>TimeSheet</label>
+        <referenceTo>TimeSheet__c</referenceTo>
+        <relationshipLabel>TimeSheet</relationshipLabel>
+        <relationshipName>TimeSheet</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>DaysInPeriod__c</fullName>
         <externalId>false</externalId>
         <formula>EndDate__c -  StartDay__c</formula>
@@ -90,6 +102,14 @@
         <label>MondayIncluded</label>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>ReportTime__c</fullName>
+        <externalId>false</externalId>
+        <label>ReportTime</label>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
     </fields>
     <fields>
         <fullName>SaturdayIncluded__c</fullName>

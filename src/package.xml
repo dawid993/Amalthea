@@ -9,6 +9,7 @@
 		<members>AMT_DAO_ConditionNode</members>
 		<members>AMT_DAO_OperatorUtils</members>
 		<members>EE_SRV_TimeSheetCreator</members>
+		<members>EE_UTL_DateUtils</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
