@@ -10,6 +10,8 @@
 		<members>AMT_DAO_OperatorUtils</members>
 		<members>EE_SRV_TimeSheetCreator</members>
 		<members>EE_UTL_DateUtils</members>
+		<members>EE_SRV_TimeSheetManager</members>
+		<members>EE_UTL_MathUtils</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
