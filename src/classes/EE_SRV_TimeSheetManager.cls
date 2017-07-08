@@ -2,49 +2,62 @@ public class EE_SRV_TimeSheetManager {
 
 	public static final String TS_PROCCESS_PREFIX = 'TimeSheetPostProcess:';
 	
-	public TimeSheet__c createTimeSheetProccess(Date startDate){
+	public static TimeSheet__c createTimeSheetProccess(Date startDate){
 		EE_SRV_TimeSheetCreator timeSheetCreator = new EE_SRV_TimeSheetCreator();
-		timeSheetCreator.createTimeSheet(startDate);		
+		timeSheetCreator.createTimeSheet(startDate);	
+
+		Database.SaveResult result;	
 
 		if(timeSheetCreator.isTimeSheetCreated()){
 			if(timeSheetCreator.isConnectedTimeSheetCreated()){
-				Database.SaveResult result = insertTimeSheets(timeSheetCreator.timeSheet,timeSheetCreator.connectedTimeSheet);
-				return result.isSuccess() ? timeSheetCreator.timeSheet : null;
+				result = insertTimeSheets(timeSheetCreator.timeSheet,timeSheetCreator.connectedTimeSheet);			
 			}else{
-				return insertSingleTimeSheet(timeSheetCreator.timeSheet).isSuccess() ? timeSheetCreator.timeSheet : null;
+				result = insertSingleTimeSheet(timeSheetCreator.timeSheet);
 			}
-		}else{			
-			return null;
 		}
 
-		/*if(result.isSuccess()){
-			return schedulePostCreationProcesses(timeSheetCreator.timeSheet);
+		if(result.isSuccess()){
+			ID jobId = schedulePostCreationProcesses(timeSheetCreator.isConnectedTimeSheetCreated() 
+				? timeSheetCreator.connectedTimeSheet : timeSheetCreator.timeSheet);
+			timeSheetCreator.timeSheet.ProcessId__c = jobId;
+			EE_DAO_TimeSheetDao.save(timeSheetCreator.timeSheet);
 		}
-			
-		*/
+
+		return timeSheetCreator.timeSheet;		
 		
 	}
 
-	public Database.SaveResult insertSingleTimeSheet(TimeSheet__c timeSheet){
-		Database.SaveResult result = Database.insert(timeSheet);
-		return result;
+	public static Database.SaveResult insertSingleTimeSheet(TimeSheet__c timeSheet){		
+		return EE_DAO_TimeSheetDao.save(timeSheet);
 	}
 
-	public Database.SaveResult insertTimeSheets(TimeSheet__c timeSheet,TimeSheet__c connectedTimeSheet){
-		Database.SaveResult result = Database.insert(connectedTimeSheet);
+	public static Database.SaveResult insertTimeSheets(TimeSheet__c timeSheet,TimeSheet__c connectedTimeSheet){
+		Database.SaveResult result = EE_DAO_TimeSheetDao.save(connectedTimeSheet);
 		if(result.isSuccess()){
 			timeSheet.ConnectedTimeSheet__c = connectedTimeSheet.ID;
-			return Database.insert(timeSheet);
+			return EE_DAO_TimeSheetDao.save(timeSheet);
 		}
 
 		return result;
 	}
 
-	public ID schedulePostCreationProccesses(TimeSheet__c timeSheet){
-		return null;
+	public static ID schedulePostCreationProcesses(TimeSheet__c timeSheet){
+		if(String.isBlank(timeSheet.ID)){
+			return null;
+		}
+
+		String cronStartDate = EE_UTL_JobsUtils.generateCronExp(timeSheet.ReportTime__c);
+		EE_JOB_NewTimeSheetCreator scheduleCreator = new EE_JOB_NewTimeSheetCreator(timeSheet.ID);
+		return System.schedule(TS_PROCCESS_PREFIX+timeSheet.ID, cronStartDate, scheduleCreator);
 	}
 
-	public void abortTimeSheetProcess(ID jobId){
-		System.abortJob(jobId);
+	public static void abortTimeSheetProcess(TimeSheet__c timeSheet){
+		if(String.isBlank(timeSheet.ID)){
+			return;
+		}
+
+		CronTrigger ct = [SELECT id FROM CronTrigger WHERE  CronJobDetail.Name = :TS_PROCCESS_PREFIX+timeSheet.ID];
+		EE_UTL_JobsUtils.abortTimeSheetProcess(ct.ID);
 	}
+	
 }
