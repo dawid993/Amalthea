@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fields>
+        <fullName>Friday_Hours__c</fullName>
+        <externalId>false</externalId>
+        <label>Friday Hours</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Monday_Hours__c</fullName>
+        <externalId>false</externalId>
+        <label>Monday Hours</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Overhours_Allowed__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Overhours Allowed</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Saturday_Hours__c</fullName>
+        <externalId>false</externalId>
+        <label>Saturday Hours</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Sunday_Hours__c</fullName>
+        <externalId>false</externalId>
+        <label>Sunday Hours</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Thursday_Hours__c</fullName>
+        <externalId>false</externalId>
+        <label>Thursday Hours</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>TimeSheet__c</fullName>
+        <externalId>false</externalId>
+        <label>TimeSheet</label>
+        <referenceTo>TimeSheet__c</referenceTo>
+        <relationshipLabel>Users TimeSheets</relationshipLabel>
+        <relationshipName>Users_TimeSheets</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackTrending>false</trackTrending>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Tuesday_Hours__c</fullName>
+        <externalId>false</externalId>
+        <label>Tuesday Hours</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>User__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>User</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Users_TimeSheets</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Wednesday_Hours__c</fullName>
+        <externalId>false</externalId>
+        <label>Wednesday Hours</label>
+        <precision>18</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <label>User TimeSheet</label>
+    <listViews>
+        <fullName>All</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <displayFormat>UTS-{00000000}</displayFormat>
+        <label>User TimeSheet Name</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Users TimeSheets</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+    <validationRules>
+        <fullName>Friday_Correctness</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(AND(Friday_Hours__c &gt; 0, TimeSheet__r.FridayIncluded__c,NOT(Overhours_Allowed__c)),TRUE,FALSE)</errorConditionFormula>
+        <errorMessage>Friday is not available in current Timesheet.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Monday_Correctness</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(AND(Monday_Hours__c &gt; 0, TimeSheet__r.MondayIncluded__c,NOT(Overhours_Allowed__c)),TRUE,FALSE)</errorConditionFormula>
+        <errorMessage>Monday is not available in current Timesheet.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Saturday_Correctness</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(AND(Saturday_Hours__c &gt; 0, TimeSheet__r.SaturdayIncluded__c,NOT(Overhours_Allowed__c)),TRUE,FALSE)</errorConditionFormula>
+        <errorMessage>Saturday is not available in current Timesheet.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Sunday_Correctness</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(AND(Sunday_Hours__c &gt; 0, TimeSheet__r.SundayIncluded__c,NOT(Overhours_Allowed__c)),TRUE,FALSE)</errorConditionFormula>
+        <errorMessage>Sundayis not available in current Timesheet.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Thursday_Correctness</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(AND(Thursday_Hours__c &gt; 0, TimeSheet__r.ThursdayIncluded__c,NOT(Overhours_Allowed__c)),TRUE,FALSE)</errorConditionFormula>
+        <errorMessage>Thursday is not available in current Timesheet.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Tuesday_Correctness</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(AND(Tuesday_Hours__c &gt; 0, TimeSheet__r.TuesdayIncluded__c,NOT(Overhours_Allowed__c)),TRUE,FALSE)</errorConditionFormula>
+        <errorMessage>Tuesday is not available in current Timesheet.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Wednesday_Correctness</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(AND(Wednesday_Hours__c &gt; 0, TimeSheet__r.WednesdayIncluded__c,NOT(Overhours_Allowed__c)),TRUE,FALSE)</errorConditionFormula>
+        <errorMessage>Wednesday is not available in current Timesheet.</errorMessage>
+    </validationRules>
+</CustomObject>

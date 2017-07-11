@@ -59,12 +59,27 @@ public class EE_SRV_TimeSheetCreator {
 	}
 
 	private DateTime calculateReportTime(){
-		if(this.timeSheet.EndDate__c == null){
+		Time confTime = getTimeFromConfing();
+		if(this.timeSheet.EndDate__c == null || confTime == null){
+			return null;
+		}
+		
+		return DateTime.newInstance(this.timeSheet.EndDate__c.addDays(-2),confTime);
+	}
+
+	private Time getTimeFromConfing(){
+		TimeSheetConfiguration__c conf = TimeSheetConfiguration__c.getInstance('Confing');
+
+		if(conf == null){
 			return null;
 		}
 
-		Time reportHour = Time.newInstance(14,0,0,0);
-		return DateTime.newInstance(this.timeSheet.EndDate__c.addDays(-2),reportHour);
+		Integer hour = Integer.valueOf(conf.Hour__c);
+		Integer minute = Integer.valueOf(conf.Minute__c);
+		Integer second = Integer.valueOf(conf.Second__c);
+		Integer milisecond = Integer.valueOf(conf.Millisecond__c);
+
+		return Time.newInstance(hour,minute,second,milisecond);
 	}
 
 	private void createConnectedTimeSheet(Date startDate){
