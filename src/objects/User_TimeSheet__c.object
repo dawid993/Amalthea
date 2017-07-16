@@ -143,6 +143,15 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>User_Comment__c</fullName>
+        <externalId>false</externalId>
+        <label>User Comment</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
         <fullName>User__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>

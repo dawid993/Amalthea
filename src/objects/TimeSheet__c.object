@@ -70,7 +70,7 @@
     <fields>
         <fullName>DaysInPeriod__c</fullName>
         <externalId>false</externalId>
-        <formula>EndDate__c -  StartDay__c</formula>
+        <formula>(EndDate__c -  StartDay__c) + 1</formula>
         <label>Days In Period</label>
         <precision>18</precision>
         <required>false</required>

@@ -1,0 +1,121 @@
+<apex:page showHeader="false" sidebar="false" standardController="User_TimeSheet__c" extensions="EE_UserTimeSheetExtension">
+	<head>
+		<style>
+			.headerPanel{
+				font-size: 24px;
+				text-align: center;
+			}
+
+			.detailsPanel{
+				padding: 5px;
+				height: 70px;
+				width: 40%;			
+								
+			}
+
+			.detailsTable{
+				width: 100%;
+			}
+
+			.detailsTableHeader{
+				text-align: center;
+				font-size: 16px;
+				padding: 5px;
+			}
+			
+			.panelLeftElement{					
+				float:left
+			}
+
+			.panelRightElement{								
+				float:right;				
+			}
+
+			.headerSize{
+				font-size: 18px;
+			}
+
+			.aligment{
+				padding-top: 7px;				
+			}
+
+			
+		</style>	
+
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<apex:stylesheet value="{!URLFOR($Resource.bootstrap, 'bootstrap.css')}"/>
+	</head>	
+	<apex:outputPanel id="mainPanel" styleClass="bootstrap container" layout="block" style="position: relative;left: 15%;right: 15%;width: 70%">	
+		<apex:outputPanel id="mainDetailsPanel" layout="block" styleClass="container">
+			<apex:outputPanel id="timesheetDetails"  layout="block" styleClass="panelLeftElement">			
+				<apex:panelGrid columns="8" styleClass="table" headerClass="headerSize" >	
+				<apex:facet name="header">Details</apex:facet>				
+					<apex:outputLabel value="From Date"/>					
+					<apex:outputField value="{!timeSheet.StartDay__c}"/>
+					<apex:outputLabel value="To Date"/>
+					<apex:outputField value="{!timeSheet.EndDate__c}"/>
+					<apex:outputLabel value="Name"/>					
+					<apex:outputText value="{!$User.FirstName} {!$User.LastName}"/>
+					<apex:outputLabel value="Email"/>
+					<apex:outputText value="{!$User.Email}"/>
+				</apex:panelGrid>
+			</apex:outputPanel>			
+		</apex:outputPanel>
+		<apex:outputPanel id="formPanel"  layout="block" styleClass="container" style="border-style: solid;border-width: 0px; border-radius: 10px;padding-top: 15px">
+			<apex:form>
+				<apex:outputPanel layout="block" id="daysPanel" styleClass="panelLeftElement">															
+						<apex:panelgrid columns="2" styleclass="table" headerClass="headerSize" style="width:300px">
+							<apex:facet name="header">Week days</apex:facet>
+							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/>
+							<apex:selectList value="{!userTimeSheet.Monday_hours__c}" size="1" styleClass="form-control">
+								<apex:selectOptions value="{!items}"/>
+							</apex:selectList>
+							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/>
+							<apex:selectList value="{!userTimeSheet.Monday_hours__c}" size="1" styleClass="form-control">
+								<apex:selectOptions value="{!items}"/>
+							</apex:selectList>
+							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/>
+							<apex:selectList value="{!userTimeSheet.Monday_hours__c}" size="1" styleClass="form-control">
+								<apex:selectOptions value="{!items}"/>
+							</apex:selectList>
+							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/> 
+							<apex:selectList value="{!userTimeSheet.Monday_hours__c}" size="1" styleClass="form-control">
+								<apex:selectOptions value="{!items}"/>
+							</apex:selectList>
+							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/>
+							<apex:selectList value="{!userTimeSheet.Monday_hours__c}" size="1" styleClass="form-control">
+								<apex:selectOptions value="{!items}"/>
+							</apex:selectList>
+							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/>
+							<apex:selectList value="{!userTimeSheet.Monday_hours__c}" size="1" styleClass="form-control">
+								<apex:selectOptions value="{!items}"/>
+							</apex:selectList>
+							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/>
+							<apex:selectList value="{!userTimeSheet.Monday_hours__c}" size="1" styleClass="form-control">
+								<apex:selectOptions value="{!items}"/>
+							</apex:selectList>
+						</apex:panelgrid>							
+				</apex:outputPanel>
+				<apex:outputPanel layout="block" id="infoPanel" styleClass="panelRightElement">					
+					<apex:outputPanel layout="block">
+						<apex:panelGrid columns="2" styleclass="table"  headerClass="headerSize">
+							<apex:facet name="header">Other</apex:facet>
+							<apex:outputLabel value="Overhours allowed"/>
+							<apex:outputField value="{!userTimeSheet.overhours_allowed__c}" styleClass="form-control"/>
+						</apex:panelGrid>	
+					</apex:outputPanel>
+					<apex:outputPanel layout="block">
+						<apex:panelGrid columns="1" styleclass="table">
+							<apex:outputLabel value="Comment"/>
+							<apex:inputField value="{!userTimeSheet.User_Comment__c}" style="width:350px" styleClass="form-control"/>							
+						</apex:panelGrid>	
+					</apex:outputPanel>
+				</apex:outputPanel>
+				<apex:outputPanel layout="block" styleClass="container" style="clear:left; position: relative; left: 40%">
+				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!save}" value="Save"/>
+				 	<apex:commandButton styleClass="btn" action="{!save}" value="Cancel"/>
+				</apex:outputPanel>				
+			</apex:form>
+		</apex:outputPanel>
+	</apex:outputPanel>
+</apex:page>

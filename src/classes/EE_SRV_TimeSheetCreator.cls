@@ -6,6 +6,8 @@ public class EE_SRV_TimeSheetCreator {
 
 	public TimeSheet__c connectedTimeSheet {get;set;}
 
+	private TimeSheetConfiguration__c timeConfig;
+
 	private Map<Integer,String> includeDays = new Map<Integer,String>{
 		0 => 'MondayIncluded__c',
 		1 => 'TuesdayIncluded__c',
@@ -18,13 +20,14 @@ public class EE_SRV_TimeSheetCreator {
 
 	public EE_SRV_TimeSheetCreator(){
 		timeSheet = new TimeSheet__c();
+		timeConfig = TimeSheetConfiguration__c.getInstance('Confing');
 	}
 
 	public static Boolean isFullWeekTimeSheet(TimeSheet__c timeSheet){
 		if(timeSheet.StartDay__c == null || timeSheet.EndDate__c == null){
 			return false;
 		}else{			
-			return timeSheet.StartDay__c.daysBetween(timeSheet.EndDate__c) == EE_UTL_DateUtils.FULL_WEEK_LENGTH;
+			return timeSheet.StartDay__c.daysBetween(timeSheet.EndDate__c) == EE_UTL_DateUtils.FULL_WEEK_LENGTH - 1;
 		}
 	}
 
@@ -68,16 +71,14 @@ public class EE_SRV_TimeSheetCreator {
 	}
 
 	private Time getTimeFromConfing(){
-		TimeSheetConfiguration__c conf = TimeSheetConfiguration__c.getInstance('Confing');
-
-		if(conf == null){
+		if(timeConfig == null){
 			return null;
 		}
 
-		Integer hour = Integer.valueOf(conf.Hour__c);
-		Integer minute = Integer.valueOf(conf.Minute__c);
-		Integer second = Integer.valueOf(conf.Second__c);
-		Integer milisecond = Integer.valueOf(conf.Millisecond__c);
+		Integer hour = Integer.valueOf(timeConfig.Hour__c);
+		Integer minute = Integer.valueOf(timeConfig.Minute__c);
+		Integer second = Integer.valueOf(timeConfig.Second__c);
+		Integer milisecond = Integer.valueOf(timeConfig.Millisecond__c);
 
 		return Time.newInstance(hour,minute,second,milisecond);
 	}

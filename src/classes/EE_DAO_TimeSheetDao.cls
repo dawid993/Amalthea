@@ -33,4 +33,27 @@ public class EE_DAO_TimeSheetDao {
 				Id = :timeSheetId
 			];
 	}
+
+	public static TimeSheet__c getByDate(Date currentDate){
+		return 
+			[SELECT
+				DaysInPeriod__c,
+				EndDate__c,
+				FridayIncluded__c,
+				MondayIncluded__c,
+				ProcessId__c,
+				ReportTime__c,
+				SaturdayIncluded__c,
+				StartDay__c,
+				SundayIncluded__c,
+				ThursdayIncluded__c,
+				ConnectedTimeSheet__c,
+				TuesdayIncluded__c,
+				WednesdayIncluded__c
+			FROM 
+				TimeSheet__c
+			WHERE
+				StartDay__c >= :currentDate AND EndDate__c <= :currentDate
+			];
+	}
 }

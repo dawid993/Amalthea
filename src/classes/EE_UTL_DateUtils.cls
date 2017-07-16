@@ -16,7 +16,7 @@ public with sharing class EE_UTL_DateUtils {
 
 	public static Integer FIRST_MONTH_DAY = 1;
 
-	public static Integer FULL_WEEK_LENGTH = 6;
+	public static Integer FULL_WEEK_LENGTH = 7;
 	
 	
 	public static Map<String,Integer> daysOfWeeks = new Map<String,Integer>{

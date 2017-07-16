@@ -59,5 +59,10 @@ public class EE_SRV_TimeSheetManager {
 		CronTrigger ct = [SELECT id FROM CronTrigger WHERE  CronJobDetail.Name = :TS_PROCCESS_PREFIX+timeSheet.ID];
 		EE_UTL_JobsUtils.abortTimeSheetProcess(ct.ID);
 	}
+
+	public static TimeSheet__c getCurrentTimeSheet(){
+		Date currentDate = Date.today();
+		return EE_DAO_TimeSheetDao.getByDate(currentDate);
+	}
 	
 }
