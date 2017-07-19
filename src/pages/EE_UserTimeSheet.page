@@ -39,79 +39,106 @@
 				padding-top: 7px;				
 			}
 
+			.infoTable{				
+				width: 100%;
+				height: 40px;
+
+			}
+
+			.infoTable td{
+				border-style: solid;
+				border-width: 2px;
+				border-color: #8484e1;
+				background-color:  #c2c2f0;
+				width:10%;
+				text-align: center;
+			}
+
+			.bootstrap h4{
+				font-size: 19px;
+				font-weight: bold;
+			}
+
 			
 		</style>	
 
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 		<apex:stylesheet value="{!URLFOR($Resource.bootstrap, 'bootstrap.css')}"/>
 	</head>	
-	<apex:outputPanel id="mainPanel" styleClass="bootstrap container" layout="block" style="position: relative;left: 15%;right: 15%;width: 70%">	
-		<apex:outputPanel id="mainDetailsPanel" layout="block" styleClass="container">
-			<apex:outputPanel id="timesheetDetails"  layout="block" styleClass="panelLeftElement">			
-				<apex:panelGrid columns="8" styleClass="table" headerClass="headerSize" >	
-				<apex:facet name="header">Details</apex:facet>				
-					<apex:outputLabel value="From Date"/>					
+	<apex:outputPanel id="mainPanel" layout="block" style="margin-left: 25%;width:50%">	
+		<apex:pageMessages />
+		<apex:outputPanel layout="block" styleClass="bootstrap" style="text-align: center">
+			<h1>TimeSheet</h1>
+		</apex:outputPanel>
+		<apex:outputPanel id="mainDetailsPanel" layout="block" style="margin-top: 30px">
+			<apex:outputPanel id="timesheetDetails"  layout="block">			
+				<apex:panelGrid columns="8" styleClass="infoTable" headerClass="headerSize" >								
+					<apex:outputLabel value="From Date" style="font-weight: bold"/>					
 					<apex:outputField value="{!timeSheet.StartDay__c}"/>
-					<apex:outputLabel value="To Date"/>
+					<apex:outputLabel value="To Date" style="font-weight: bold"/>
 					<apex:outputField value="{!timeSheet.EndDate__c}"/>
-					<apex:outputLabel value="Name"/>					
+					<apex:outputLabel value="Name" style="font-weight: bold"/>					
 					<apex:outputText value="{!$User.FirstName} {!$User.LastName}"/>
-					<apex:outputLabel value="Email"/>
+					<apex:outputLabel value="Email" style="font-weight: bold"/>
 					<apex:outputText value="{!$User.Email}"/>
 				</apex:panelGrid>
 			</apex:outputPanel>			
-		</apex:outputPanel>
-		<apex:outputPanel id="formPanel"  layout="block" styleClass="container" style="border-style: solid;border-width: 0px; border-radius: 10px;padding-top: 15px">
-			<apex:form>
+		</apex:outputPanel>		
+		<apex:outputPanel id="formPanel"  layout="block" styleClass="bootstrap container" style="padding-top: 15px;clear: both">
+			<apex:form >
 				<apex:outputPanel layout="block" id="daysPanel" styleClass="panelLeftElement">															
-						<apex:panelgrid columns="2" styleclass="table" headerClass="headerSize" style="width:300px">
-							<apex:facet name="header">Week days</apex:facet>
+						<apex:panelgrid columns="2" styleclass="table" headerClass="headerSize" style="width:250px">
+							<apex:facet name="header">Week days</apex:facet>							
 							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/>
-							<apex:selectList value="{!userTimeSheet.Monday_hours__c}" size="1" styleClass="form-control">
+							<apex:selectList value="{!userTimeSheet.Monday_Hours__c}" size="1" styleClass="form-control" disabled="{!mondayDisabled}">
 								<apex:selectOptions value="{!items}"/>
 							</apex:selectList>
-							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/>
-							<apex:selectList value="{!userTimeSheet.Monday_hours__c}" size="1" styleClass="form-control">
+							<apex:outputLabel value="{!$Label.Tuesday}" styleClass="aligment"/>
+							<apex:selectList value="{!userTimeSheet.Tuesday_Hours__c}" size="1" styleClass="form-control" disabled="{!tuesdayDisabled}">
 								<apex:selectOptions value="{!items}"/>
 							</apex:selectList>
-							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/>
-							<apex:selectList value="{!userTimeSheet.Monday_hours__c}" size="1" styleClass="form-control">
+							<apex:outputLabel value="{!$Label.Wednesday}" styleClass="aligment"/>
+							<apex:selectList value="{!userTimeSheet.Wednesday_Hours__c}" size="1" styleClass="form-control" disabled="{!wednesdayDisabled}">
 								<apex:selectOptions value="{!items}"/>
 							</apex:selectList>
-							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/> 
-							<apex:selectList value="{!userTimeSheet.Monday_hours__c}" size="1" styleClass="form-control">
+							<apex:outputLabel value="{!$Label.Thursday}" styleClass="aligment"/> 
+							<apex:selectList value="{!userTimeSheet.Thursday_Hours__c}" size="1" styleClass="form-control" disabled="{!thursdayDisabled}">
 								<apex:selectOptions value="{!items}"/>
 							</apex:selectList>
-							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/>
-							<apex:selectList value="{!userTimeSheet.Monday_hours__c}" size="1" styleClass="form-control">
+							<apex:outputLabel value="{!$Label.Friday}" styleClass="aligment"/>
+							<apex:selectList value="{!userTimeSheet.Friday_Hours__c}" size="1" styleClass="form-control" disabled="{!fridayDisabled}">
 								<apex:selectOptions value="{!items}"/>
 							</apex:selectList>
-							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/>
-							<apex:selectList value="{!userTimeSheet.Monday_hours__c}" size="1" styleClass="form-control">
+							<apex:outputLabel value="{!$Label.Saturday}" styleClass="aligment"/>
+							<apex:selectList value="{!userTimeSheet.Saturday_Hours__c}" size="1" styleClass="form-control" disabled="{!saturdayDisabled}">
 								<apex:selectOptions value="{!items}"/>
 							</apex:selectList>
-							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/>
-							<apex:selectList value="{!userTimeSheet.Monday_hours__c}" size="1" styleClass="form-control">
+							<apex:outputLabel value="{!$Label.Sunday}" styleClass="aligment"/>
+							<apex:selectList value="{!userTimeSheet.Sunday_Hours__c}" size="1" styleClass="form-control" disabled="{!sundayDisabled}">
 								<apex:selectOptions value="{!items}"/>
 							</apex:selectList>
 						</apex:panelgrid>							
-				</apex:outputPanel>
-				<apex:outputPanel layout="block" id="infoPanel" styleClass="panelRightElement">					
+				</apex:outputPanel>				
+				<apex:outputPanel layout="block" id="infoPanel" styleClass="panelRightElement" style="">					
 					<apex:outputPanel layout="block">
 						<apex:panelGrid columns="2" styleclass="table"  headerClass="headerSize">
 							<apex:facet name="header">Other</apex:facet>
 							<apex:outputLabel value="Overhours allowed"/>
-							<apex:outputField value="{!userTimeSheet.overhours_allowed__c}" styleClass="form-control"/>
+							<apex:outputField value="{!userTimeSheet.Overhours_Allowed__c}" styleClass="form-control"/>
+							<apex:outputLabel value="Current Project" styleClass="aligment"/>
+							<apex:selectList value="{!userTimeSheet.Monday_Hours__c}" size="1" styleClass="form-control">
+								<apex:selectOptions value="{!items}"/>
+							</apex:selectList>
 						</apex:panelGrid>	
 					</apex:outputPanel>
 					<apex:outputPanel layout="block">
 						<apex:panelGrid columns="1" styleclass="table">
 							<apex:outputLabel value="Comment"/>
-							<apex:inputField value="{!userTimeSheet.User_Comment__c}" style="width:350px" styleClass="form-control"/>							
+							<apex:inputField value="{!userTimeSheet.User_Comment__c}" style="width:200px" styleClass="form-control"/>							
 						</apex:panelGrid>	
 					</apex:outputPanel>
 				</apex:outputPanel>
-				<apex:outputPanel layout="block" styleClass="container" style="clear:left; position: relative; left: 40%">
+				<apex:outputPanel layout="block" styleClass="container" style="clear:left; position: relative; left: 40%;top:30px">
 				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!save}" value="Save"/>
 				 	<apex:commandButton styleClass="btn" action="{!save}" value="Cancel"/>
 				</apex:outputPanel>				

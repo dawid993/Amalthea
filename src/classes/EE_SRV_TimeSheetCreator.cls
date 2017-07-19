@@ -41,6 +41,11 @@ public class EE_SRV_TimeSheetCreator {
 		return endDate;
 	}
 
+	private void setCorrectDate(TimeSheet__c masterDateTimeSheet,TimeSheet__c dependentDateTimeSheet){
+		dependentDateTimeSheet.ReportTime__c = masterDateTimeSheet.ReportTime__c;
+		dependentDateTimeSheet.Communicat_Date__c = masterDateTimeSheet.Communicat_Date__c;
+	}
+
 	private void includeDays(Date startDate){
 		Date endDate = getEndDate(startDate);
 		Integer dayOfWeek = EE_UTL_DateUtils.getDayOfWeek(startDate);
@@ -52,7 +57,7 @@ public class EE_SRV_TimeSheetCreator {
 
 		for(Integer i=dayOfWeek;i<=EE_UTL_DateUtils.SUNDAY;i++){
 			Date currentDate = startDate.addDays(i-dayOfWeek);
-			if(currentDate > endDate || EE_UTL_DateUtils.isWeekendDay(currentDate)){
+			if(currentDate > endDate){
 				timeSheetObject.put(includeDays.get(i),false);
 			}else{
 				timeSheetObject.put(includeDays.get(i),true);
@@ -66,8 +71,18 @@ public class EE_SRV_TimeSheetCreator {
 		if(this.timeSheet.EndDate__c == null || confTime == null){
 			return null;
 		}
-		
-		return DateTime.newInstance(this.timeSheet.EndDate__c.addDays(-2),confTime);
+
+		Integer addDays = Integer.valueOf(timeConfig.Report_Time_Days__c);
+		return DateTime.newInstance(this.timeSheet.EndDate__c.addDays(addDays),confTime);
+	}
+
+	private Date calculateCommunicatDate(){
+		if(timeConfig == null || this.timeSheet.EndDate__c == null){
+			return null;
+		}
+
+		Integer addDays = Integer.valueOf(timeConfig.Communicat_Date_Days__c);
+		return this.timesheet.EndDate__c.addDays(addDays);
 	}
 
 	private Time getTimeFromConfing(){
@@ -99,19 +114,20 @@ public class EE_SRV_TimeSheetCreator {
 		timeSheet.StartDay__c = startDate;
 		timeSheet.EndDate__c = endDate;
 		timeSheet.ReportTime__c = calculateReportTime();
+		timeSheet.Communicat_Date__c = calculateCommunicatDate();
 		includeDays(startDate);
 		
 		if(isFullWeekTimeSheet(timeSheet)){
 			Date nextWeekStartDate = EE_UTL_DateUtils.getFirstDayOfNextWeek(timeSheet.StartDay__c);			
 			if(EE_UTL_DateUtils.isNewMonthInWeek(nextWeekStartDate)){
 				createConnectedTimeSheet(nextWeekStartDate);
-				this.connectedTimeSheet.ReportTime__c = this.timeSheet.ReportTime__c;
+				setCorrectDate(this.timeSheet,this.connectedTimeSheet);				
 			}
 		}else{
 			if(startDate.day() == EE_UTL_DateUtils.FIRST_MONTH_DAY){
 				Date nextWeekStartDate = EE_UTL_DateUtils.getFirstDayOfNextWeek(timeSheet.StartDay__c);
 				createConnectedTimeSheet(nextWeekStartDate);
-				this.timeSheet.ReportTime__c = this.connectedTimeSheet.ReportTime__c;
+				setCorrectDate(this.connectedTimeSheet,this.timeSheet);
 			}
 		}
 	}

@@ -3,6 +3,17 @@
     <customSettingsType>List</customSettingsType>
     <enableFeeds>false</enableFeeds>
     <fields>
+        <fullName>Communicat_Date_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Communicat Date Days</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Hour__c</fullName>
         <externalId>false</externalId>
         <label>Hour</label>
@@ -29,6 +40,17 @@
         <externalId>false</externalId>
         <label>Minute</label>
         <precision>2</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Report_Time_Days__c</fullName>
+        <externalId>false</externalId>
+        <label>Report Time Days</label>
+        <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
         <trackTrending>false</trackTrending>
