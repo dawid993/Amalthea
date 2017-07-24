@@ -65,7 +65,8 @@
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 		<apex:stylesheet value="{!URLFOR($Resource.bootstrap, 'bootstrap.css')}"/>
 	</head>	
-	<apex:outputPanel id="mainPanel" layout="block" style="margin-left: 25%;width:50%">	
+	<apex:outputPanel id="mainPanel" layout="block" style="margin-left: 15%;width:70%">	
+		<apex:pageMessage severity="Error" summary="Error check"/>
 		<apex:pageMessages />
 		<apex:outputPanel layout="block" styleClass="bootstrap" style="text-align: center">
 			<h1>TimeSheet</h1>
@@ -87,7 +88,7 @@
 		<apex:outputPanel id="formPanel"  layout="block" styleClass="bootstrap container" style="padding-top: 15px;clear: both">
 			<apex:form >
 				<apex:outputPanel layout="block" id="daysPanel" styleClass="panelLeftElement">															
-						<apex:panelgrid columns="2" styleclass="table" headerClass="headerSize" style="width:250px">
+						<apex:panelgrid columns="2" styleclass="table" headerClass="headerSize" style="width:250px;">
 							<apex:facet name="header">Week days</apex:facet>							
 							<apex:outputLabel value="{!$Label.Monday}" styleClass="aligment"/>
 							<apex:selectList value="{!userTimeSheet.Monday_Hours__c}" size="1" styleClass="form-control" disabled="{!mondayDisabled}">
@@ -138,7 +139,7 @@
 						</apex:panelGrid>	
 					</apex:outputPanel>
 				</apex:outputPanel>
-				<apex:outputPanel layout="block" styleClass="container" style="clear:left; position: relative; left: 40%;top:30px">
+				<apex:outputPanel layout="block" styleClass="container" style="clear:both;margin-left: 45%" >
 				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!save}" value="Save"/>
 				 	<apex:commandButton styleClass="btn" action="{!save}" value="Cancel"/>
 				</apex:outputPanel>				

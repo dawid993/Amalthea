@@ -56,47 +56,41 @@
     <enableSharing>false</enableSharing>
     <enableStreamingApi>false</enableStreamingApi>
     <fields>
-        <fullName>Country__c</fullName>
+        <fullName>Project__c</fullName>
         <externalId>false</externalId>
-        <label>Country</label>
-        <length>3</length>
-        <required>true</required>
+        <label>Project</label>
+        <referenceTo>Company_Project__c</referenceTo>
+        <relationshipLabel>User Assigments</relationshipLabel>
+        <relationshipName>Project_Assigments</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
         <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
     </fields>
     <fields>
-        <fullName>TimeSheet__c</fullName>
+        <fullName>User__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
         <externalId>false</externalId>
-        <label>TimeSheet</label>
-        <referenceTo>TimeSheet__c</referenceTo>
-        <relationshipLabel>Vacation Days</relationshipLabel>
-        <relationshipName>Vacation_Days</relationshipName>
+        <label>User</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Project_Assigments</relationshipName>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Lookup</type>
     </fields>
-    <fields>
-        <fullName>Vacation_Day__c</fullName>
-        <externalId>false</externalId>
-        <label>Vacation Day</label>
-        <required>true</required>
-        <trackTrending>false</trackTrending>
-        <type>Date</type>
-    </fields>
-    <label>Vacation Day</label>
+    <label>Project Assigment</label>
     <listViews>
         <fullName>All</fullName>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
     <nameField>
-        <displayFormat>VD-{0000}</displayFormat>
-        <label>Vacation Days Name</label>
+        <displayFormat>PA-{00000}</displayFormat>
+        <label>Project Assigment Name</label>
         <type>AutoNumber</type>
     </nameField>
-    <pluralLabel>Vacation Days</pluralLabel>
+    <pluralLabel>Project Assigments</pluralLabel>
     <searchLayouts/>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>ControlledByParent</sharingModel>
 </CustomObject>

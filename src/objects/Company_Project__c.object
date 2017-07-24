@@ -48,55 +48,24 @@
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <enableActivities>false</enableActivities>
-    <enableBulkApi>false</enableBulkApi>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
     <enableSearch>true</enableSearch>
-    <enableSharing>false</enableSharing>
-    <enableStreamingApi>false</enableStreamingApi>
-    <fields>
-        <fullName>Country__c</fullName>
-        <externalId>false</externalId>
-        <label>Country</label>
-        <length>3</length>
-        <required>true</required>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
-        <fullName>TimeSheet__c</fullName>
-        <deleteConstraint>SetNull</deleteConstraint>
-        <externalId>false</externalId>
-        <label>TimeSheet</label>
-        <referenceTo>TimeSheet__c</referenceTo>
-        <relationshipLabel>Vacation Days</relationshipLabel>
-        <relationshipName>Vacation_Days</relationshipName>
-        <required>false</required>
-        <trackTrending>false</trackTrending>
-        <type>Lookup</type>
-    </fields>
-    <fields>
-        <fullName>Vacation_Day__c</fullName>
-        <externalId>false</externalId>
-        <label>Vacation Day</label>
-        <required>true</required>
-        <trackTrending>false</trackTrending>
-        <type>Date</type>
-    </fields>
-    <label>Vacation Day</label>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <label>Project</label>
     <listViews>
         <fullName>All</fullName>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
     <nameField>
-        <displayFormat>VD-{0000}</displayFormat>
-        <label>Vacation Days Name</label>
-        <type>AutoNumber</type>
+        <label>Project Name</label>
+        <type>Text</type>
     </nameField>
-    <pluralLabel>Vacation Days</pluralLabel>
+    <pluralLabel>Projects</pluralLabel>
     <searchLayouts/>
     <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

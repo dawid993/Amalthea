@@ -2,9 +2,13 @@ public with sharing class EE_UserTimeSheetExtension {
 
 	public final User_TimeSheet__c userTimeSheet {get;set;}
 
+    public final ApexPages.StandardController standardController{get;set;}
+
     public TimeSheet__c timeSheet {get;set;}
 
     public Set<Integer> vacationDays;
+
+    public List<Company_Project__c> userProjects {get;set;}
 
     public Boolean mondayDisabled {get{ return (vacationDays != null && vacationDays.contains(EE_UTL_DateUtils.MONDAY)) || !timeSheet.MondayIncluded__c ? true:false;}}
 
@@ -31,10 +35,34 @@ public with sharing class EE_UserTimeSheetExtension {
     };
     
     public EE_UserTimeSheetExtension(ApexPages.StandardController stdController) {
+        this.standardController = stdController;
+        this.standardController.addFields(new String[]{
+            'Friday_Hours__c',
+            'Monday_Hours__c',
+            'Overhours_Allowed__c',
+            'Project_Id__c',
+            'Saturday_Hours__c',
+            'Sunday_Hours__c',
+            'Thursday_Hours__c',
+            'TimeSheet__c',
+            'Tuesday_Hours__c',
+            'User__c',
+            'User_Comment__c',
+            'Wednesday_Hours__c'  
+
+        });
+
+
         this.userTimeSheet = (User_TimeSheet__c)stdController.getRecord(); 
         Id timeSheetId = ApexPages.currentPage().getParameters().get('tsId'); 
-        timeSheet = EE_DAO_TimeSheetDao.getById(timeSheetId);
+
+        if(String.isBlank(this.userTimeSheet.TimeSheet__c )){
+            this.userTimeSheet.TimeSheet__c = timeSheetId;         
+        }
+
+        timeSheet = EE_DAO_TimeSheetDao.getById(this.userTimeSheet.TimeSheet__c);        
         calculateVacationDays();
+        userProjects = getProjectsForUser(UserInfo.getUserId());
     }   
 
     public List<WeekDay> getOrderedDays(){
@@ -51,6 +79,15 @@ public with sharing class EE_UserTimeSheetExtension {
         return options;
     }
 
+    public List<SelectOption> getProjectItems(){
+        List<SelectOption> options = new List<SelectOption>();
+        for(Company_Project__c project:userProjects){
+            options.add(new SelectOption(project.Id,project.Name));
+        }
+
+        return options;
+    }
+
     private void calculateVacationDays(){
         vacationDays = new Set<Integer>();
         List<Vacation_Days__c> days = [SELECT Country__c,Vacation_Day__c FROM Vacation_Days__c WHERE  TimeSheet__c=:timeSheet.ID]; 
@@ -60,6 +97,23 @@ public with sharing class EE_UserTimeSheetExtension {
             Integer daysBetween = timeSheet.StartDay__c.daysBetween(vacationDay.Vacation_Day__c);
             vacationDays.add(startDateDayOfWeek + daysBetween);
         }
+    }
+
+    private void validateDays(){
+        sObject userTsObject = (sObject) this.userTimeSheet;
+
+        for(WeekDay day:orderedDays){
+            if(userTsObject.get(day.fieldName) == null){
+                userTsObject.put(day.fieldName,0);
+            }
+        }
+    }
+
+    public PageReference saveUserTimeSheet(){
+        validateDays();
+        this.standardController.save();
+
+        return null;
     }
 
     private class WeekDay{
@@ -72,8 +126,14 @@ public with sharing class EE_UserTimeSheetExtension {
         }
     }
 
-    public PageReference ac(){
-        return null;
+    public List<Company_Project__c> getProjectsForUser(Id userId){
+       List<Company_Project_Assigment__c> assigments = [SELECT ID,Project__r.Name,Project__r.Id FROM Company_Project_Assigment__c WHERE User__c = :userId];
+       List<Company_Project__c> projects = new List<Company_Project__c>();
+       for(Company_Project_Assigment__c assigment:assigments){
+            projects.add(assigment.Project__r);
+       }
+
+       return projects;
     }
     
 }

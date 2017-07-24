@@ -8,6 +8,7 @@
         <members>AMT_DAO_Operator</members>
         <members>AMT_DAO_OperatorUtils</members>
         <members>EE_DAO_TimeSheetDao</members>
+        <members>EE_DAO_UserTimeSheetDAO</members>
         <members>EE_JOB_NewTimeSheetCreator</members>
         <members>EE_SRV_TimeSheetCreator</members>
         <members>EE_SRV_TimeSheetManager</members>
@@ -21,6 +22,8 @@
         <name>ApexPage</name>
     </types>
     <types>
+        <members>Company_Project_Assigment__c</members>
+        <members>Company_Project__c</members>
         <members>TimeSheetConfiguration__c</members>
         <members>TimeSheet__c</members>
         <members>User_TimeSheet__c</members>
