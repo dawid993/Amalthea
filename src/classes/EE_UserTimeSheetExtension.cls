@@ -6,9 +6,9 @@ public with sharing class EE_UserTimeSheetExtension {
 
     public TimeSheet__c timeSheet {get;set;}
 
-    public Set<Integer> vacationDays;
+    public Company_Project__c project {get;set;}
 
-    public List<Company_Project__c> userProjects {get;set;}
+    public Set<Integer> vacationDays;    
 
     public Boolean mondayDisabled {get{ return (vacationDays != null && vacationDays.contains(EE_UTL_DateUtils.MONDAY)) || !timeSheet.MondayIncluded__c ? true:false;}}
 
@@ -36,33 +36,25 @@ public with sharing class EE_UserTimeSheetExtension {
     
     public EE_UserTimeSheetExtension(ApexPages.StandardController stdController) {
         this.standardController = stdController;
-        this.standardController.addFields(new String[]{
-            'Friday_Hours__c',
-            'Monday_Hours__c',
-            'Overhours_Allowed__c',
-            'Project_Id__c',
-            'Saturday_Hours__c',
-            'Sunday_Hours__c',
-            'Thursday_Hours__c',
-            'TimeSheet__c',
-            'Tuesday_Hours__c',
-            'User__c',
-            'User_Comment__c',
-            'Wednesday_Hours__c'  
-
-        });
-
-
+        loadAllFieldsToController();
         this.userTimeSheet = (User_TimeSheet__c)stdController.getRecord(); 
+
         Id timeSheetId = ApexPages.currentPage().getParameters().get('tsId'); 
+        Id projectId = ApexPages.currentPage().getParameters().get('projectId'); 
+        findCurrentUserProject(projectId);
 
         if(String.isBlank(this.userTimeSheet.TimeSheet__c )){
             this.userTimeSheet.TimeSheet__c = timeSheetId;         
         }
 
-        timeSheet = EE_DAO_TimeSheetDao.getById(this.userTimeSheet.TimeSheet__c);        
-        calculateVacationDays();
-        userProjects = getProjectsForUser(UserInfo.getUserId());
+        timeSheet = EE_DAO_TimeSheetDao.getById(this.userTimeSheet.TimeSheet__c);  
+        if(timeSheet == null || !EE_SRV_TimeSheetManager.isTimeSheetActive(timeSheet)){
+           Apexpages.addMessage( new ApexPages.Message (ApexPages.Severity.ERROR, 'Time Sheet is not active.')); 
+        }    
+
+        calculateVacationDays();   
+        updateUserTimeSheetStatus();
+
     }   
 
     public List<WeekDay> getOrderedDays(){
@@ -79,13 +71,41 @@ public with sharing class EE_UserTimeSheetExtension {
         return options;
     }
 
-    public List<SelectOption> getProjectItems(){
-        List<SelectOption> options = new List<SelectOption>();
-        for(Company_Project__c project:userProjects){
-            options.add(new SelectOption(project.Id,project.Name));
-        }
+    public void sentForApproval(){
+        this.userTimeSheet.Status__c = EE_SRV_TimeSheetManager.SENT_STATUS;
+        update this.userTimeSheet;
+    }
 
-        return options;
+    public void saveUserTimeSheet(){
+        validateDays();
+        this.userTimeSheet.Status__c =  EE_SRV_TimeSheetManager.SUBMITTED_STATUS;
+        this.userTimeSheet.Project_Id__c = project.ID;
+        upsert this.userTimeSheet;
+    }
+
+    public Boolean getDisableSaveButton(){
+        return this.userTimeSheet.Status__c == EE_SRV_TimeSheetManager.APPROVED_STATUS || this.userTimeSheet.Status__c == EE_SRV_TimeSheetManager.OVERDUE_STATUS
+            || this.userTimeSheet.Status__c == EE_SRV_TimeSheetManager.SENT_STATUS;
+    }
+
+    private void findCurrentUserProject(Id projectId){
+        if(String.isNotBlank(this.userTimeSheet.Project_Id__c)){
+            projectId = this.userTimeSheet.Project_Id__c;
+        }
+        List<Company_Project__c> projects =  getProjectsForUser(UserInfo.getUserId());
+        for(Company_Project__c p : projects){
+            if(p.Id ==  projectId){
+                project = p;
+            }
+        }
+    }
+
+    private void loadAllFieldsToController(){
+        Map<String, Schema.SObjectField> objectFields = Schema.getGlobalDescribe().get('User_TimeSheet__c').getDescribe().fields.getMap();
+        List<String> fieldNames = new List<String>();
+        fieldNames.addAll(objectFields.keySet());      
+
+        this.standardController.addFields(fieldNames);
     }
 
     private void calculateVacationDays(){
@@ -109,12 +129,21 @@ public with sharing class EE_UserTimeSheetExtension {
         }
     }
 
-    public PageReference saveUserTimeSheet(){
+    public void saveOverdueUserTimeSheet(){
         validateDays();
-        this.standardController.save();
-
-        return null;
+        this.userTimeSheet.Project_Id__c = project.ID;
+        this.userTimeSheet.Status__c = EE_SRV_TimeSheetManager.OVERDUE_STATUS;
+        if(EE_SRV_TimeSheetManager.isTimeSheetActive(timeSheet)){
+            upsert this.userTimeSheet;
+        }
+        
     }
+
+    private void updateUserTimeSheetStatus(){
+        if(EE_SRV_TimeSheetManager.shouldBeUserTimeSheetOverdue(this.userTimeSheet,this.timeSheet)){
+            this.userTimeSheet.Status__c = EE_SRV_TimeSheetManager.OVERDUE_STATUS;            
+        }
+    }   
 
     private class WeekDay{
         public String label {get;set;}
@@ -134,6 +163,6 @@ public with sharing class EE_UserTimeSheetExtension {
        }
 
        return projects;
-    }
+    } 
     
 }

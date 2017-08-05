@@ -14,6 +14,7 @@ public class EE_DAO_TimeSheetDao {
 	public static TimeSheet__c getById(Id timeSheetId){
 		return 
 			[SELECT
+				IsActive__c,
 				DaysInPeriod__c,
 				EndDate__c,
 				FridayIncluded__c,
@@ -37,6 +38,7 @@ public class EE_DAO_TimeSheetDao {
 	public static TimeSheet__c getByDate(Date currentDate){
 		return 
 			[SELECT
+				IsActive__c,
 				DaysInPeriod__c,
 				EndDate__c,
 				FridayIncluded__c,
