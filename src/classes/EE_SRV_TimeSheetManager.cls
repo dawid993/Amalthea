@@ -11,6 +11,8 @@ public class EE_SRV_TimeSheetManager {
     public static String OVERDUE_STATUS = 'Overdue';
 
     public static String APPROVED_STATUS = 'Approved';
+
+    public static String NEW_STATUS = 'New';
 	
 	public static TimeSheet__c createTimeSheetProccess(Date startDate){
 		EE_SRV_TimeSheetCreator timeSheetCreator = new EE_SRV_TimeSheetCreator();
@@ -82,7 +84,7 @@ public class EE_SRV_TimeSheetManager {
 
 	public static Boolean shouldBeUserTimeSheetOverdue(User_TimeSheet__c userTimeSheet,TimeSheet__c timeSheet){
 		DateTime reportTime = timeSheet.ReportTime__c;
-		if(System.now() > reportTime && !userTimeSheet.Previously_Rejected__c){
+		if(System.now() > reportTime && !userTimeSheet.Previously_Sent__c){
 			return true;
 		}else{
 			return false;

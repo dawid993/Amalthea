@@ -55,6 +55,10 @@ public with sharing class EE_UserTimeSheetExtension {
         calculateVacationDays();   
         updateUserTimeSheetStatus();
 
+        if(ApexPages.currentPage().getParameters().get('msg') == 'success'){
+            Apexpages.addMessage( new ApexPages.Message (ApexPages.Severity.CONFIRM, 'Time Sheet saved.')); 
+        }
+
     }   
 
     public List<WeekDay> getOrderedDays(){
@@ -72,20 +76,50 @@ public with sharing class EE_UserTimeSheetExtension {
     }
 
     public void sentForApproval(){
+        String statusBeforeUpdate = this.userTimeSheet.Status__c;
+        Boolean sentFlagBeforeUpdate = this.userTimeSheet.Previously_Sent__c;
+
         this.userTimeSheet.Status__c = EE_SRV_TimeSheetManager.SENT_STATUS;
-        update this.userTimeSheet;
+        this.userTimeSheet.Previously_Sent__c = true;
+
+        try{           
+            update this.userTimeSheet;
+            Apexpages.addMessage( new ApexPages.Message (ApexPages.Severity.INFO, 'Time Sheet sent for sentForApproval.'));  
+        }catch(DMLException ex){
+            Apexpages.addMessage( new ApexPages.Message (ApexPages.Severity.ERROR, ex.getDMLMessage(0)));
+            this.userTimeSheet.Status__c = statusBeforeUpdate;
+            this.userTimeSheet.Previously_Sent__c = sentFlagBeforeUpdate;
+        }        
     }
 
-    public void saveUserTimeSheet(){
-        validateDays();
+    public PageReference saveUserTimeSheet(){
+       // validateDays();
+
+        String statusBeforeUpdate = String.isNotBlank(this.userTimeSheet.Status__c) ? this.userTimeSheet.Status__c : EE_SRV_TimeSheetManager.NEW_STATUS;
+        Boolean sentFlagBeforeUpdate = this.userTimeSheet.Previously_Sent__c;
+
         this.userTimeSheet.Status__c =  EE_SRV_TimeSheetManager.SUBMITTED_STATUS;
         this.userTimeSheet.Project_Id__c = project.ID;
-        upsert this.userTimeSheet;
+        
+        try{
+            upsert this.userTimeSheet;           
+            PageReference pageRef = new PageReference('/apex/EE_UserTimeSheet?msg=success&id='+this.userTimeSheet.ID);
+            pageRef.setRedirect(true);
+            return pageRef;
+        }catch(DMLException ex){
+            Apexpages.addMessage( new ApexPages.Message (ApexPages.Severity.ERROR, ex.getDmlMessage(0)));  
+            this.userTimeSheet.Status__c = statusBeforeUpdate;
+            this.userTimeSheet.Previously_Sent__c = sentFlagBeforeUpdate;       
+        }
+
+        return null;
     }
 
     public Boolean getDisableSaveButton(){
-        return this.userTimeSheet.Status__c == EE_SRV_TimeSheetManager.APPROVED_STATUS || this.userTimeSheet.Status__c == EE_SRV_TimeSheetManager.OVERDUE_STATUS
-            || this.userTimeSheet.Status__c == EE_SRV_TimeSheetManager.SENT_STATUS;
+        return this.userTimeSheet.Status__c == EE_SRV_TimeSheetManager.APPROVED_STATUS 
+            || this.userTimeSheet.Status__c == EE_SRV_TimeSheetManager.OVERDUE_STATUS
+            || this.userTimeSheet.Status__c == EE_SRV_TimeSheetManager.SENT_STATUS
+            || this.project == null;
     }
 
     private void findCurrentUserProject(Id projectId){
@@ -129,6 +163,9 @@ public with sharing class EE_UserTimeSheetExtension {
         }
     }
 
+    /*
+    * Check if timesheet is active to avoid overdue previously approved user timesheets.
+    */
     public void saveOverdueUserTimeSheet(){
         validateDays();
         this.userTimeSheet.Project_Id__c = project.ID;

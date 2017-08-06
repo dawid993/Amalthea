@@ -76,8 +76,7 @@
 	<apex:outputPanel id="mainPanel" layout="block" style="margin-left: 15%;width:70%">			
 		<apex:outputPanel layout="block" styleClass="bootstrap" style="text-align: center">
 			<h1>TimeSheet</h1>
-		</apex:outputPanel>
-		<apex:pageMessages />
+		</apex:outputPanel>		
 		<apex:outputPanel id="mainDetailsPanel" layout="block" style="margin-top: 30px">
 			<apex:outputPanel id="timesheetDetails"  layout="block">			
 				<apex:panelGrid columns="8" styleClass="infoTable" headerClass="headerSize" >								
@@ -92,6 +91,7 @@
 				</apex:panelGrid>
 			</apex:outputPanel>			
 		</apex:outputPanel>		
+		<apex:pageMessages />
 		<apex:outputPanel id="formPanel"  layout="block" styleClass="bootstrap container" style="padding-top: 15px;clear: both">
 			<apex:form >
 				<apex:outputPanel layout="block" id="daysPanel" styleClass="panelLeftElement">															
@@ -147,8 +147,8 @@
 					</apex:outputPanel>					
 				</apex:outputPanel>
 				<apex:outputPanel layout="block" styleClass="container" style="clear:both;margin-left: 35%" >
-				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!saveUserTimeSheet}" value="Save" disabled="{!disableSaveButton}"/>
-				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!sentForApproval}" value="Sent to Approval" disabled="{!userTimeSheet.Status__c != 'Submitted'}"/>
+				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!saveUserTimeSheet}" value="Save" disabled="{!disableSaveButton}" reRender="mainPanel"/>
+				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!sentForApproval}" value="Sent to Approval" disabled="{!userTimeSheet.Status__c != 'Submitted'}" reRender="mainPanel"/>
 				 	<apex:commandButton styleClass="btn" action="{!cancel}" value="Cancel"/>
 				</apex:outputPanel>	
 
