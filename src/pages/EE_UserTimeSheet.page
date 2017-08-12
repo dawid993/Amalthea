@@ -147,12 +147,22 @@
 					</apex:outputPanel>					
 				</apex:outputPanel>
 				<apex:outputPanel layout="block" styleClass="container" style="clear:both;margin-left: 35%" >
-				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!saveUserTimeSheet}" value="Save" disabled="{!disableSaveButton}" reRender="mainPanel"/>
-				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!sentForApproval}" value="Sent to Approval" disabled="{!userTimeSheet.Status__c != 'Submitted'}" reRender="mainPanel"/>
+				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!saveUserTimeSheet}" value="Save" disabled="{!disableSaveButton}" reRender="mainPanel" status="status"/>
+				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!sentForApproval}" value="Sent to Approval" disabled="{!userTimeSheet.Status__c != 'Submitted'}" reRender="mainPanel" status="status"/>
 				 	<apex:commandButton styleClass="btn" action="{!cancel}" value="Cancel"/>
 				</apex:outputPanel>	
 
-				<apex:actionFunction action="{!saveOverdueUserTimeSheet}" name="saveOverdue" reRender=""/>			
+				<apex:actionFunction action="{!saveOverdueUserTimeSheet}" name="saveOverdue" reRender=""/>		
+				<apex:actionStatus id="status">
+		            <apex:facet name="start">
+		            <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.75; z-index: 1000; background-color: black;">
+		                &nbsp;
+		            </div>
+		            <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 30% 50%">
+		                <img src="http://upload.wikimedia.org/wikipedia/commons/e/ed/Cursor_Windows_Vista.gif" />
+		            </div>
+		            </apex:facet>
+       			 </apex:actionStatus>	
 			</apex:form>
 		</apex:outputPanel>
 	</apex:outputPanel>

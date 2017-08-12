@@ -83,6 +83,10 @@ public class EE_SRV_TimeSheetManager {
 	}
 
 	public static Boolean shouldBeUserTimeSheetOverdue(User_TimeSheet__c userTimeSheet,TimeSheet__c timeSheet){
+		if(userTimeSheet == null || timeSheet == null){
+			return false;
+		}
+		
 		DateTime reportTime = timeSheet.ReportTime__c;
 		if(System.now() > reportTime && !userTimeSheet.Previously_Sent__c){
 			return true;
@@ -92,7 +96,11 @@ public class EE_SRV_TimeSheetManager {
 	}
 
 	public static Boolean isTimeSheetActive(TimeSheet__c timeSheet){
-		return timeSheet.isActive__c;
+		if(timeSheet != null){
+			return timeSheet.isActive__c;
+		}else{
+			return false;
+		}
 	}
 	
 }

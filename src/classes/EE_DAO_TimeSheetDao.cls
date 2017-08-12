@@ -12,7 +12,7 @@ public class EE_DAO_TimeSheetDao {
 	}
 
 	public static TimeSheet__c getById(Id timeSheetId){
-		return 
+		List<TimeSheet__c> timeSheet = 
 			[SELECT
 				IsActive__c,
 				DaysInPeriod__c,
@@ -33,10 +33,12 @@ public class EE_DAO_TimeSheetDao {
 			WHERE
 				Id = :timeSheetId
 			];
+
+		return timeSheet != null && !timeSheet.isEmpty() ? timeSheet[0] : null;
 	}
 
 	public static TimeSheet__c getByDate(Date currentDate){
-		return 
+		List<TimeSheet__c> timeSheet = 
 			[SELECT
 				IsActive__c,
 				DaysInPeriod__c,
@@ -57,5 +59,7 @@ public class EE_DAO_TimeSheetDao {
 			WHERE
 				StartDay__c >= :currentDate AND EndDate__c <= :currentDate
 			];
+
+		return timeSheet != null && !timeSheet.isEmpty() ? timeSheet[0] : null;	
 	}
 }
