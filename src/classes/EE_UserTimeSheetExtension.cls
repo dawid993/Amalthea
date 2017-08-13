@@ -1,5 +1,7 @@
 public with sharing class EE_UserTimeSheetExtension {
 
+    public static final String SUCCESS_MSG = 'Success';     
+
 	public final User_TimeSheet__c userTimeSheet {get;set;}
 
     public final ApexPages.StandardController standardController{get;set;}
@@ -23,6 +25,8 @@ public with sharing class EE_UserTimeSheetExtension {
     public Boolean saturdayDisabled { get{ return (vacationDays != null && vacationDays.contains(EE_UTL_DateUtils.SATURDAY)) || timeSheet != null &&  !timeSheet.SaturdayIncluded__c ? true:false;}}
 
     public Boolean sundayDisabled {get{ return (vacationDays != null && vacationDays.contains(EE_UTL_DateUtils.SUNDAY)) || timeSheet != null &&  !timeSheet.SundayIncluded__c ? true:false;}}
+
+    public Boolean redirectAfterOverdueCheck {get;set;}
     
     private final List<WeekDay> orderedDays = new List<WeekDay>{
         new WeekDay('Monday','Monday_Hours__c'),
@@ -57,10 +61,12 @@ public with sharing class EE_UserTimeSheetExtension {
            showCommunicat(ApexPages.Severity.INFO, 'Time Sheet is not active.'); 
         }    
 
-        calculateVacationDays();   
+        calculateVacationDays(); 
+
+        redirectAfterOverdueCheck = false;  
         updateUserTimeSheetStatus();
 
-        if(ApexPages.currentPage().getParameters().get('msg') == 'success'){
+        if(ApexPages.currentPage().getParameters().get('msg') == SUCCESS_MSG){
             showCommunicat(ApexPages.Severity.CONFIRM, 'Time Sheet saved.'); 
         }
 
@@ -88,9 +94,15 @@ public with sharing class EE_UserTimeSheetExtension {
         this.userTimeSheet.Project_Id__c = project != null ? project.ID : null;
         this.userTimeSheet.Status__c = EE_SRV_TimeSheetManager.OVERDUE_STATUS;
         this.userTimeSheet.User__c = UserInfo.getUserId();
-        if(String.isNotBlank(this.userTimeSheet.Project_Id__c) && !isTimeSheetDuplicated()){
-            upsert this.userTimeSheet;
-        }        
+        if(String.isNotBlank(this.userTimeSheet.Project_Id__c) && !isTimeSheetDuplicated() && timeSheet != null){
+            if(String.isBlank(this.userTimeSheet.Id)){
+                insert this.userTimeSheet;   
+                redirectAfterOverdueCheck = true;        
+            }else{
+                update this.userTimeSheet;
+                redirectAfterOverdueCheck = false;
+            }
+        }
     }
 
     public void sentForApproval(){

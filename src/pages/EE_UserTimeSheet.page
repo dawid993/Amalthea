@@ -66,14 +66,17 @@
 		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 
 		<script>
+			var OVERDUE_STATUS = 'Overdue'
 			 $(function() {
- 				if({!userTimeSheet.status__c == 'Overdue'}){
- 					saveOverdue(); 					
+ 				if('{!userTimeSheet.status__c}' == OVERDUE_STATUS){
+ 					saveOverdue(); 									
  				}
- 			 });
+ 			 }); 			
 		</script>
-	</head>		
-	<apex:outputPanel id="mainPanel" layout="block" style="margin-left: 15%;width:70%">			
+
+	</head>	
+
+	<apex:outputPanel id="mainPanel" layout="block" style="margin-left: 15%;width:70%" >			
 		<apex:outputPanel layout="block" styleClass="bootstrap" style="text-align: center">
 			<h1>TimeSheet</h1>
 		</apex:outputPanel>		
@@ -152,7 +155,7 @@
 				 	<apex:commandButton styleClass="btn" action="{!cancel}" value="Cancel"/>
 				</apex:outputPanel>	
 
-				<apex:actionFunction action="{!saveOverdueUserTimeSheet}" name="saveOverdue" reRender=""/>		
+				<apex:actionFunction action="{!saveOverdueUserTimeSheet}" name="saveOverdue" rerender="js-panel" oncomplete="redirectAfterOverdueSave()"/>		
 				<apex:actionStatus id="status">
 		            <apex:facet name="start">
 		            <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.75; z-index: 1000; background-color: black;">
@@ -163,6 +166,18 @@
 		            </div>
 		            </apex:facet>
        			 </apex:actionStatus>	
+
+       			 <apex:outputPanel id="js-panel">				
+					<script type="text/javascript">
+					 function redirectAfterOverdueSave(){ 				 	
+					 	if({!redirectAfterOverdueCheck}){
+					 		var newLocation = '/apex/EE_UserTimeSheet?id='+('{!userTimeSheet.ID}' == '' ? '':'{!userTimeSheet.ID}');
+					 		window.location.replace(newLocation);
+					 	}
+	 				 }
+					</script>
+				</apex:outputPanel>
+
 			</apex:form>
 		</apex:outputPanel>
 	</apex:outputPanel>
