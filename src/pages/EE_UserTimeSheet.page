@@ -151,7 +151,7 @@
 				</apex:outputPanel>
 				<apex:outputPanel layout="block" styleClass="container" style="clear:both;margin-left: 35%" >
 				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!saveUserTimeSheet}" value="Save" disabled="{!disableSaveButton}" reRender="mainPanel" status="status"/>
-				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!sentForApproval}" value="Sent to Approval" disabled="{!userTimeSheet.Status__c != 'Submitted'}" reRender="mainPanel" status="status"/>
+				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!sentForApproval}" value="Sent to Approval" disabled="{!userTimeSheet.Status__c != 'Submitted'}" status="status"/>
 				 	<apex:commandButton styleClass="btn" action="{!cancel}" value="Cancel"/>
 				</apex:outputPanel>	
 

@@ -115,11 +115,12 @@ public class EE_SRV_TimeSheetCreator {
 		timeSheet.EndDate__c = endDate;
 		timeSheet.ReportTime__c = calculateReportTime();
 		timeSheet.Communicat_Date__c = calculateCommunicatDate();
+		timesheet.isActive__c = true;
 		includeDays(startDate);
 		
-		if(isFullWeekTimeSheet(timeSheet)){
+		if(isFullWeekTimeSheet(timeSheet) && startDate.day() != EE_UTL_DateUtils.FIRST_MONTH_DAY){
 			Date nextWeekStartDate = EE_UTL_DateUtils.getFirstDayOfNextWeek(timeSheet.StartDay__c);			
-			if(EE_UTL_DateUtils.isNewMonthInWeek(nextWeekStartDate)){
+			if(EE_UTL_DateUtils.isLastWeekInMonth(nextWeekStartDate)){
 				createConnectedTimeSheet(nextWeekStartDate);
 				setCorrectDate(this.timeSheet,this.connectedTimeSheet);				
 			}

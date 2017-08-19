@@ -39,6 +39,7 @@ public with sharing class EE_UserTimeSheetExtension {
     };
     
     public EE_UserTimeSheetExtension(ApexPages.StandardController stdController) {
+        System.debug('Create');
         this.standardController = stdController;
         loadAllFieldsToController();
         this.userTimeSheet = (User_TimeSheet__c)stdController.getRecord(); 
@@ -105,7 +106,7 @@ public with sharing class EE_UserTimeSheetExtension {
         }
     }
 
-    public void sentForApproval(){
+    public PageReference sentForApproval(){
         String statusBeforeUpdate = this.userTimeSheet.Status__c;
         Boolean sentFlagBeforeUpdate = this.userTimeSheet.Previously_Sent__c;
 
@@ -119,7 +120,9 @@ public with sharing class EE_UserTimeSheetExtension {
             Apexpages.addMessage( new ApexPages.Message (ApexPages.Severity.ERROR, ex.getDMLMessage(0)));
             this.userTimeSheet.Status__c = statusBeforeUpdate;
             this.userTimeSheet.Previously_Sent__c = sentFlagBeforeUpdate;
-        }        
+        }
+
+        RETURN NULL;       
     }
 
     public PageReference saveUserTimeSheet(){

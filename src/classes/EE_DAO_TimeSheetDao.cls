@@ -62,4 +62,45 @@ public class EE_DAO_TimeSheetDao {
 
 		return timeSheet != null && !timeSheet.isEmpty() ? timeSheet[0] : null;	
 	}
+
+	public static TimeSheet__c getWithChildrenById(Id timeSheetId){
+		List<TimeSheet__c> timeSheet = 
+			[SELECT
+				IsActive__c,
+				DaysInPeriod__c,
+				EndDate__c,
+				FridayIncluded__c,
+				MondayIncluded__c,
+				ProcessId__c,
+				ReportTime__c,
+				SaturdayIncluded__c,
+				StartDay__c,
+				SundayIncluded__c,
+				ThursdayIncluded__c,
+				ConnectedTimeSheet__c,
+				TuesdayIncluded__c,
+				WednesdayIncluded__c,
+					(SELECT
+					IsActive__c,
+					DaysInPeriod__c,
+					EndDate__c,
+					FridayIncluded__c,
+					MondayIncluded__c,
+					ProcessId__c,
+					ReportTime__c,
+					SaturdayIncluded__c,
+					StartDay__c,
+					SundayIncluded__c,
+					ThursdayIncluded__c,
+					ConnectedTimeSheet__c,
+					TuesdayIncluded__c,
+					WednesdayIncluded__c FROM TimeSheet__r)
+			FROM 
+				TimeSheet__c
+			WHERE
+				Id = :timeSheetId
+			];
+
+		return timeSheet != null && !timeSheet.isEmpty() ? timeSheet[0] : null;
+	}
 }

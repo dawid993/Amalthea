@@ -59,6 +59,7 @@ public class EE_SRV_TimeSheetManager {
 		}
 
 		String cronStartDate = EE_UTL_JobsUtils.generateCronExp(timeSheet.ReportTime__c);
+		System.debug(cronStartDate);
 		EE_JOB_NewTimeSheetCreator scheduleCreator = new EE_JOB_NewTimeSheetCreator(timeSheet.ID);
 		return System.schedule(TS_PROCCESS_PREFIX+timeSheet.ID, cronStartDate, scheduleCreator);
 	}
@@ -101,6 +102,18 @@ public class EE_SRV_TimeSheetManager {
 		}else{
 			return false;
 		}
+	}
+
+	public static void deactivateTimeSheets(TimeSheet__c timeSheet){
+		if(timeSheet != null){
+			timeSheet.isActive__c = false;
+			for(TimeSheet__c ts:timeSheet.TimeSheet__r){
+				ts.isActive__c = false;
+			}
+		}
+
+		update timeSheet.TimeSheet__r;
+		update timeSheet;
 	}
 	
 }

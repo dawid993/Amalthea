@@ -35,22 +35,31 @@ public with sharing class EE_UTL_DateUtils {
 	}
 
 	public static Boolean isWeekendDay(Date currentDate){
-		return  getDayOfWeek(currentDate) == SATURDAY || getDayOfWeek(currentDate) == SUNDAY;
+		return  getDayOfWeek(currentDate) == SATURDAY || getDayOfWeek(currentDate) == EE_UTL_DateUtils.SUNDAY;
 	}
 
 	public static Date getLastDayOfPreviousMonth(Date currentDate){
-		Date firstMonthDay = Date.newInstance(currentDate.year(), currentDate.month(), FIRST_MONTH_DAY);
+		Date firstMonthDay = Date.newInstance(currentDate.year(), currentDate.month(), EE_UTL_DateUtils.FIRST_MONTH_DAY);
 		return firstMonthDay.addDays(-1);
 	}
 
 	public static Date getFirstDayOfNextWeek(Date startDate){
 		Integer dayOfWeek = getDayOfWeek(startDate);
-		return startDate.addDays(SUNDAY - dayOfWeek+1);
+		return startDate.addDays(EE_UTL_DateUtils.SUNDAY - dayOfWeek+1);
 	}
 
 	public static Boolean isNewMonthInWeek(Date startDate){
 		Integer dayOfWeek = getDayOfWeek(startDate);
-		Date endDate = startDate.addDays(SUNDAY - dayOfWeek);
+		Date endDate = startDate.addDays(EE_UTL_DateUtils.SUNDAY - dayOfWeek);
 		return endDate.month() != startDate.month();
+	}
+
+	public static Boolean isLastWeekInMonth(Date startDate){
+		if(EE_UTL_DateUtils.isNewMonthInWeek(startDate)){
+			return true;
+		}
+		Integer dayOfWeek = getDayOfWeek(startDate);
+		startDate = startDate.addDays(EE_UTL_DateUtils.SUNDAY - dayOfWeek);		
+		return startDate.addDays(1).day() == 1;
 	}
 }
