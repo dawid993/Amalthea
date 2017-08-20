@@ -1,4 +1,4 @@
-<apex:page showHeader="false" sidebar="false" standardController="User_TimeSheet__c" extensions="EE_UserTimeSheetExtension">
+<apex:page showHeader="false" sidebar="false" standardController="User_TimeSheet__c" extensions="EE_CTRL_UserTimeSheetExtension">
 	<head>
 		<style>
 			.headerPanel{
