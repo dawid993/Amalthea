@@ -1,4 +1,4 @@
-public with sharing class EE_UserTimeSheetExtension {
+public with sharing class EE_CTRL_UserTimeSheetExtension {
 
     public static final String SUCCESS_MSG = 'Success';     
 
@@ -38,7 +38,7 @@ public with sharing class EE_UserTimeSheetExtension {
         new WeekDay('Sunday','Sunday_Hours__c') 
     };
     
-    public EE_UserTimeSheetExtension(ApexPages.StandardController stdController) {
+    public EE_CTRL_UserTimeSheetExtension(ApexPages.StandardController stdController) {
         System.debug('Create');
         this.standardController = stdController;
         loadAllFieldsToController();
