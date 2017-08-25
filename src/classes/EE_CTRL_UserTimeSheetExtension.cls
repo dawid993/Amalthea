@@ -71,6 +71,11 @@ public with sharing class EE_CTRL_UserTimeSheetExtension {
             showCommunicat(ApexPages.Severity.CONFIRM, 'Time Sheet saved.'); 
         }
 
+        showCommunicat(ApexPages.Severity.INFO, 'Time1 Sheet is not active.');
+        showCommunicat(ApexPages.Severity.INFO, 'Time2 Sheet is not active.');
+        showCommunicat(ApexPages.Severity.INFO, 'Time3 Sheet is not active.');
+        showCommunicat(ApexPages.Severity.CONFIRM, 'Time2 Sheet saved.');
+        showCommunicat(ApexPages.Severity.CONFIRM, 'Time4 Sheet saved.');
     }   
 
     public List<WeekDay> getOrderedDays(){
