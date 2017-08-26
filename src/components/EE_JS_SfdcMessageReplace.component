@@ -1,0 +1,98 @@
+<apex:component >
+    <script>
+
+             function replaceStandardSalsforceMessages(){
+ 			    let errorMsg = [];
+ 			    let infoMsg = [];
+ 			    let successMsg = [];
+
+ 			    errorMsg = getMessagesFor('.message.errorM3');
+ 			    infoMsg = getMessagesFor('.message.infoM3');
+ 			    successMsg = getMessagesFor('.message.confirmM3');
+
+ 			    errorDiv = buildAlertDiv('bootstrap alert alert-danger',errorMsg,'Error');
+ 			    infoDiv = buildAlertDiv('alert alert-info',infoMsg,'Info');
+ 			    successDiv = buildAlertDiv('alert alert-success',successMsg,'Success')
+
+ 			    replaceMessages('.message.errorM3',errorDiv);
+ 			    replaceMessages('.message.infoM3',infoDiv);
+ 			    replaceMessages('.message.confirmM3',successDiv);
+ 			 }
+
+ 			 function findElement(parent,selector){
+ 			    let domElement
+ 			    if(parent == null){
+ 			        domElement = domElement = $(selector);
+ 			    }else{
+ 			        domElement = parent.find(selector);
+ 			    }
+ 			    return domElement;
+ 			 }
+
+ 			 function replaceMessages(targetDivClassName,replacementDiv){
+ 			    let targetDiv = findElement(null,targetDivClassName);
+ 			    if(targetDiv == null){
+ 			        return;
+ 			    }
+
+ 			    targetDiv.find('table').remove();
+ 			    targetDiv.removeClass('message');
+ 			    targetDiv.append(replacementDiv);
+ 			 }
+
+ 			 function getMessagesFor(selector){
+ 			    let messages = [];
+
+ 			    let selectedElement = findElement(null,selector);
+ 			    let singleMessage = findSingleMessage(selectedElement);
+ 			    findMessages(selectedElement);
+
+                if(singleMessage != null){
+ 			        messages.push(singleMessage);
+                }
+
+ 			    messages = messages.concat(findMessages(selectedElement));
+ 			    return messages;
+
+ 			 }
+
+ 			 function findSingleMessage(domElement){
+ 			    let singleSpan = findElement(domElement,'.messageText');
+ 			    return extractFromDirtyElement(singleSpan.html());
+ 			 }
+
+ 			 function findMessages(domElement){
+ 			    let messages = [];
+ 			    let elements = findElement(domElement,'ul');
+ 			    if(elements == null){
+ 			        return null;
+ 			    }
+ 			    elements.children().each(function(index){
+ 			        messages.push($(this).text());
+ 			    })
+
+ 			   return messages;
+
+ 			 }
+
+ 			 function extractFromDirtyElement(str){
+ 			    const regex = /<\/span>(.+)<br>/g;
+ 			    let m;
+
+                let matchingStr = regex.exec(str);
+                if(matchingStr == null){
+                    return null;
+                }
+                return matchingStr[1];
+ 			 }
+
+ 			 function buildAlertDiv(divClass,messages,headerInfo){
+ 			    let alertDiv = '<div class=\''+divClass+'\'>\n<strong>'+headerInfo+'</strong><ul>\n';
+ 			    for(let msg in messages){
+ 			        alertDiv = alertDiv+'<li>'+messages[msg]+'</li>\n';
+ 			    }
+ 			    alertDiv = alertDiv+'</ul>\n</div>';
+ 			    return alertDiv;
+ 			 }
+		</script>
+</apex:component>
