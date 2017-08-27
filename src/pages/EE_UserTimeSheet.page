@@ -64,7 +64,7 @@
 					<apex:outputLabel value="Name" styleClass="detailLabel"/>
 					<apex:outputText value="{!$User.FirstName} {!$User.LastName}"/>
 					<apex:outputLabel value="Email" styleClass="detailLabel"/>
-					<apex:outputText value="bieniekdawid2aizst@gmail.com"/>
+					<apex:outputText value="{!$User.Email}"/>
 				</apex:panelGrid>
 			</apex:outputPanel>			
 		</apex:outputPanel>		
@@ -132,12 +132,12 @@
 				</apex:outputPanel>
 				<apex:outputPanel layout="block" styleClass="buttonPanel">
 				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!saveUserTimeSheet}" value="Save"
-                                        disabled="{!disableSaveButton}" reRender="mainPanel" status="status" oncomplete="replaceStandardSalsforceMessages();"/>
+                                        disabled="{!disableSaveButton}" rerender="mainPanel" status="status" oncomplete="replaceStandardSalsforceMessages()"/>
 				 	<apex:commandButton style="margin-right: 5px;" styleClass="btn btn-success" action="{!sentForApproval}" value="Sent to Approval" disabled="{!userTimeSheet.Status__c != 'Submitted'}"
-                                        status="status" oncomplete="replaceStandardSalsforceMessages();"/>
+                                        status="status"  rerender="mainPanel" oncomplete="replaceStandardSalsforceMessages()"/>
 				 	<apex:commandButton styleClass="btn" action="{!cancel}" value="Cancel"/>
 				</apex:outputPanel>
-				<apex:actionFunction action="{!saveOverdueUserTimeSheet}" name="saveOverdue" rerender="js-panel" oncomplete="redirectAfterOverdueSave()"/>		
+				<apex:actionFunction action="{!saveOverdueUserTimeSheet}" name="saveOverdue" rerender="js-panel" oncomplete="redirectAfterOverdueSave()"/>
 				<c:EE_ActionStatusComponent/>
        			 <apex:outputPanel id="js-panel">				
 					<script type="text/javascript">
