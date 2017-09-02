@@ -41,7 +41,11 @@ public with sharing class EE_CTRL_UserTimeSheetExtension {
     public EE_CTRL_UserTimeSheetExtension(ApexPages.StandardController stdController) {
         System.debug('Create');
         this.standardController = stdController;
-        loadAllFieldsToController();
+
+		if(!Test.isRunningTest()){
+        	loadAllFieldsToController();
+		}
+
         this.userTimeSheet = (User_TimeSheet__c)stdController.getRecord(); 
 
         Id timeSheetId = ApexPages.currentPage().getParameters().get('tsId'); 
@@ -64,7 +68,7 @@ public with sharing class EE_CTRL_UserTimeSheetExtension {
 
         calculateVacationDays(); 
 
-        redirectAfterOverdueCheck = false;  
+        redirectAfterOverdueCheck = false;
         updateUserTimeSheetStatus();
 
         if(ApexPages.currentPage().getParameters().get('msg') == SUCCESS_MSG){
@@ -106,28 +110,36 @@ public with sharing class EE_CTRL_UserTimeSheetExtension {
     }
 
     public PageReference sentForApproval(){
+		validateDays();
         String statusBeforeUpdate = this.userTimeSheet.Status__c;
         Boolean sentFlagBeforeUpdate = this.userTimeSheet.Previously_Sent__c;
+
+		if(statusBeforeUpdate != EE_SRV_TimeSheetManager.SUBMITTED_STATUS){
+			return null;
+		}
 
         this.userTimeSheet.Status__c = EE_SRV_TimeSheetManager.SENT_STATUS;
         this.userTimeSheet.Previously_Sent__c = true;
 
         try{           
             update this.userTimeSheet;
-            showCommunicat(ApexPages.Severity.INFO, 'Time Sheet sent for sentForApproval.');  
+            showCommunicat(ApexPages.Severity.INFO, 'Time Sheet sent for Approval.');
         }catch(DMLException ex){
             Apexpages.addMessage( new ApexPages.Message (ApexPages.Severity.ERROR, ex.getDMLMessage(0)));
             this.userTimeSheet.Status__c = statusBeforeUpdate;
             this.userTimeSheet.Previously_Sent__c = sentFlagBeforeUpdate;
         }
 
-        RETURN NULL;       
+        return null;
     }
 
     public PageReference saveUserTimeSheet(){
-           // validateDays();
+		validateDays();
+        String statusBeforeUpdate = String.isNotBlank(this.userTimeSheet.Status__c) ? this.userTimeSheet.Status__c : EE_SRV_TimeSheetManager.NEW_STATUS;
 
-        String statusBeforeUpdate = String.isNotBlank(this.userTimeSheet.Status__c) ? this.userTimeSheet.Status__c : EE_SRV_TimeSheetManager.NEW_STATUS;      
+		if(statusBeforeUpdate == EE_SRV_TimeSheetManager.OVERDUE_STATUS){
+			return null;
+		}
 
         this.userTimeSheet.Status__c =  EE_SRV_TimeSheetManager.SUBMITTED_STATUS;
         this.userTimeSheet.Project_Id__c = project.ID;
