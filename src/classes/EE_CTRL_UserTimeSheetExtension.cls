@@ -137,7 +137,7 @@ public with sharing class EE_CTRL_UserTimeSheetExtension {
 		validateDays();
         String statusBeforeUpdate = String.isNotBlank(this.userTimeSheet.Status__c) ? this.userTimeSheet.Status__c : EE_SRV_TimeSheetManager.NEW_STATUS;
 
-		if(statusBeforeUpdate == EE_SRV_TimeSheetManager.OVERDUE_STATUS){
+		if(this.getDisableSaveButton()){
 			return null;
 		}
 
@@ -205,9 +205,8 @@ public with sharing class EE_CTRL_UserTimeSheetExtension {
         List<Vacation_Days__c> days = [SELECT Country__c,Vacation_Day__c FROM Vacation_Days__c WHERE  TimeSheet__c=:timeSheet.ID]; 
 
         for(Vacation_Days__c vacationDay:days){
-            Integer startDateDayOfWeek = EE_UTL_DateUtils.getDayOfWeek(timeSheet.StartDay__c);
-            Integer daysBetween = timeSheet.StartDay__c.daysBetween(vacationDay.Vacation_Day__c);
-            vacationDays.add(startDateDayOfWeek + daysBetween);
+			Integer vacationWeekDay = EE_UTL_DateUtils.getWeekDayOfVacationDay(this.timeSheet.StartDay__c,vacationDay.Vacation_Day__c);
+            vacationDays.add(vacationWeekDay);
         }
 
         System.debug(vacationDays);

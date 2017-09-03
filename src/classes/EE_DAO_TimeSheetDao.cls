@@ -103,4 +103,30 @@ public class EE_DAO_TimeSheetDao {
 
 		return timeSheet != null && !timeSheet.isEmpty() ? timeSheet[0] : null;
 	}
+
+	public static User_TimeSheet__c getUserTimeSheetById(ID userTimeSheetId){
+		List<User_TimeSheet__c> userTimeSheets =
+			[SELECT
+					Friday_Hours__c,
+					Monday_Hours__c,
+					Overhours_Allowed__c,
+					Previously_Rejected__c,
+					Previously_Sent__c,
+					Project_Id__c,
+					Saturday_Hours__c,
+					Status__c,
+					Sunday_Hours__c,
+					Thursday_Hours__c,
+					TimeSheet__c,
+					Tuesday_Hours__c,
+					User__c,
+					User_Comment__c,
+					Wednesday_Hours__c
+			FROM
+				User_TimeSheet__c
+			WHERE
+				Id = :userTimeSheetId
+			];
+		return userTimeSheets != null && !userTimeSheets.isEmpty() ? userTimeSheets[0] : null;
+	}
 }

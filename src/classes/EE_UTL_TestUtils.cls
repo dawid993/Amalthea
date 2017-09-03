@@ -48,9 +48,26 @@ public class EE_UTL_TestUtils {
 	}
 
 	public static TimeSheet__c initDefaultTimeSheet(){
-		Date startDate = Date.newInstance(2099,1,14);
+		Date startDate = Date.newInstance(2099,1,12);
 		TimeSheet__c timeSheet = EE_UTL_TestUtils.getTimeSheet(startDate);
 
 		return timeSheet;
 	}
+
+	public static List<Vacation_Days__c> initDefaultVacationDaysForTimeSheet(TimeSheet__c timeSheet){
+		List<Vacation_Days__c> vacationDays = new List<Vacation_Days__c>();
+		vacationDays.add(new Vacation_Days__c(TimeSheet__c =timeSheet.ID,Country__c = 'PL'
+				,Vacation_Day__c =timeSheet.StartDay__c));
+		vacationDays.add(new Vacation_Days__c(TimeSheet__c =timeSheet.ID,Country__c = 'PL'
+				,Vacation_Day__c =timeSheet.EndDate__c));
+
+		if(timeSheet.StartDay__c.daysBetween(timeSheet.EndDate__c) == EE_UTL_DateUtils.FULL_WEEK_LENGTH - 1){
+			vacationDays.add(new Vacation_Days__c(TimeSheet__c =timeSheet.ID,Country__c = 'PL'
+					,Vacation_Day__c =timeSheet.StartDay__c.addDays(3)));
+		}
+
+		return vacationDays;
+	}
+
+
 }

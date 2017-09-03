@@ -62,4 +62,10 @@ public with sharing class EE_UTL_DateUtils {
 		startDate = startDate.addDays(EE_UTL_DateUtils.SUNDAY - dayOfWeek);		
 		return startDate.addDays(1).day() == 1;
 	}
+
+	public static Integer getWeekDayOfVacationDay(Date startDate,Date vacationDate){
+		Integer startDateDayOfWeek = EE_UTL_DateUtils.getDayOfWeek(startDate);
+		Integer daysBetween = startDate.daysBetween(vacationDate);
+		return startDateDayOfWeek + daysBetween;
+	}
 }
