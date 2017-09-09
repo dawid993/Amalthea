@@ -16,185 +16,169 @@ public class EE_TEST_CTRL_UserTimeSheetExtension {
 
 	@isTest
 	static void userTimeSheetCreatedTest(){
-		Company_Project__c project = EE_UTL_TestUtils.initTestUserAndProjectAssociation('Test Project');
-		TimeSheet__c timeSheet = EE_UTL_TestUtils.initDefaultTimeSheet();
+		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
 
 		Test.startTest();
 
-		PageReference tsPage = Page.EE_UserTimeSheet;
-		Test.setCurrentPageReference(tsPage);
-		ApexPages.currentPage().getParameters().put('tsId',timeSheet.ID);
-		ApexPages.currentPage().getParameters().put('projectId',project.ID);
+		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
+		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
+		testUnit.initNewExtension();
+		testUnit.save();
 
-		EE_CTRL_UserTimeSheetExtension extension = getExtension(new User_TimeSheet__c());
-		PageReference pageRef = extension.saveUserTimeSheet();
-
-		System.assertEquals(SUCCESS,pageRef.getParameters().get('msg'));
-		System.assertEquals(extension.userTimeSheet.ID,pageRef.getParameters().get('id'));
+		System.assertEquals(SUCCESS,testUnit.currentPage.getParameters().get('msg'));
+		System.assertEquals(testUnit.extension.userTimeSheet.ID,testUnit.currentPage.getParameters().get('id'));
 
 		Test.stopTest();
 	}
 
 	@isTest
 	static void userTimeSheetCreatedAndSendTest(){
-		Company_Project__c project = EE_UTL_TestUtils.initTestUserAndProjectAssociation('Test Project');
-		TimeSheet__c timeSheet = EE_UTL_TestUtils.initDefaultTimeSheet();
+		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
 
 		Test.startTest();
 
-		PageReference tsPage = Page.EE_UserTimeSheet;
-		Test.setCurrentPageReference(tsPage);
-		ApexPages.currentPage().getParameters().put('tsId',timeSheet.ID);
-		ApexPages.currentPage().getParameters().put('projectId',project.ID);
+		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
+		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
+		testUnit.initNewExtension();
+		testUnit.save();
+		System.assertEquals(SUCCESS,testUnit.currentPage.getParameters().get('msg'));
 
-		EE_CTRL_UserTimeSheetExtension extension = getExtension(new User_TimeSheet__c());
-		PageReference pageRef = extension.saveUserTimeSheet();
-		Test.setCurrentPageReference(pageRef);
-		extension.sentForApproval();
-
-		System.assertEquals(EE_SRV_TimeSheetManager.SENT_STATUS,extension.userTimeSheet.Status__c);
+		testUnit.sentForApproval();
+		System.assertEquals(EE_SRV_TimeSheetManager.SENT_STATUS,testUnit.getCurrentUserTimeSheetStatus());
 
 		Test.stopTest();
 	}
 
 	@isTest
 	static void userTimeSheetOverdueTest(){
-		Company_Project__c project = EE_UTL_TestUtils.initTestUserAndProjectAssociation('Test Project');
-		TimeSheet__c timeSheet = EE_UTL_TestUtils.initDefaultTimeSheet();
-		timeSheet.ReportTime__c = Datetime.newInstance(1970,1,14);
-		update timeSheet;
+		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
+		testUnit.unitTimeSheet.ReportTime__c = Datetime.newInstance(1970,1,14);
+		update testUnit.unitTimeSheet;
 
 		Test.startTest();
 
-		PageReference tsPage = Page.EE_UserTimeSheet;
-		Test.setCurrentPageReference(tsPage);
-		ApexPages.currentPage().getParameters().put('tsId',timeSheet.ID);
-		ApexPages.currentPage().getParameters().put('projectId',project.ID);
+		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
+		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
+		testUnit.initNewExtension();
 
-		EE_CTRL_UserTimeSheetExtension extension = getExtension(new User_TimeSheet__c());
-		System.assert(extension.getDisableSaveButton());
-		System.assertEquals(EE_SRV_TimeSheetManager.OVERDUE_STATUS,extension.userTimeSheet.Status__c);
+		System.assert(testUnit.extension.getDisableSaveButton());
+		System.assertEquals(EE_SRV_TimeSheetManager.OVERDUE_STATUS,testUnit.getCurrentUserTimeSheetStatus());
 
-		PageReference pageRef = extension.saveUserTimeSheet();
+		PageReference pageRef = testUnit.save();
 		System.assertEquals(null,pageRef);
 
-		extension.saveOverdueUserTimeSheet();
-		System.assert(extension.redirectAfterOverdueCheck);
+		testUnit.saveOverdue();
+		System.assert(testUnit.isRedirectAfterOverdueCheck());
 
 		Test.stopTest();
 	}
 
 	@isTest
 	static void sentForApprovalAndApprovedTest(){
-		Company_Project__c project = EE_UTL_TestUtils.initTestUserAndProjectAssociation('Test Project');
-		TimeSheet__c timeSheet = EE_UTL_TestUtils.initDefaultTimeSheet();
+		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
 
 		Test.startTest();
 
-		PageReference tsPage = Page.EE_UserTimeSheet;
-		Test.setCurrentPageReference(tsPage);
-		ApexPages.currentPage().getParameters().put('tsId',timeSheet.ID);
-		ApexPages.currentPage().getParameters().put('projectId',project.ID);
+		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
+		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
+		testUnit.initNewExtension();
 
-		EE_CTRL_UserTimeSheetExtension extension = getExtension(new User_TimeSheet__c());
-
-		PageReference pageRef = extension.saveUserTimeSheet();
+		PageReference pageRef = testUnit.save();
 		System.assertNotEquals(null,pageRef);
 
-		Test.setCurrentPageReference(pageRef);
-		Id savedTsId = ApexPages.currentPage().getParameters().get('id');
-		User_TimeSheet__c savedTs = EE_DAO_TimeSheetDao.getUserTimeSheetById(savedTsId);
-		extension = getExtension(savedTs);
-		extension.sentForApproval();
+		testUnit.sentForApproval();
 
-		System.assertEquals(EE_SRV_TimeSheetManager.SENT_STATUS,extension.userTimeSheet.Status__c);
-		System.assert(extension.userTimeSheet.Previously_Sent__c);
+		System.assertEquals(EE_SRV_TimeSheetManager.SENT_STATUS,testUnit.getCurrentUserTimeSheetStatus());
+		System.assert(testUnit.extension.userTimeSheet.Previously_Sent__c);
 
-		extension.userTimeSheet.Status__c = EE_SRV_TimeSheetManager.APPROVED_STATUS;
-		update extension.userTimeSheet;
+		testUnit.approveUserTimeSheet();
 
-		savedTS = EE_DAO_TimeSheetDao.getUserTimeSheetById(extension.userTimeSheet.ID);
-		extension = getExtension(savedTs);
-		System.assert(extension.getDisableSaveButton());
-		extension.saveUserTimeSheet();
-		System.assertEquals(EE_SRV_TimeSheetManager.APPROVED_STATUS,extension.userTimeSheet.Status__c);
-		System.assert(extension.userTimeSheet.Previously_Sent__c);
+		System.assert(testUnit.extension.getDisableSaveButton());
+
+		testUnit.save();
+		System.assertEquals(EE_SRV_TimeSheetManager.APPROVED_STATUS,testUnit.getCurrentUserTimeSheetStatus());
+		System.assert(testUnit.extension.userTimeSheet.Previously_Sent__c);
 
 		Test.stopTest();
 	}
 
 	@isTest
 	static void rejectedAndApprovedTest(){
-		Company_Project__c project = EE_UTL_TestUtils.initTestUserAndProjectAssociation('Test Project');
-		TimeSheet__c timeSheet = EE_UTL_TestUtils.initDefaultTimeSheet();
+		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
 
 		Test.startTest();
 
-		PageReference tsPage = Page.EE_UserTimeSheet;
-		Test.setCurrentPageReference(tsPage);
-		ApexPages.currentPage().getParameters().put('tsId',timeSheet.ID);
-		ApexPages.currentPage().getParameters().put('projectId',project.ID);
+		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
+		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
+		testUnit.initNewExtension();
 
-		EE_CTRL_UserTimeSheetExtension extension = getExtension(new User_TimeSheet__c());
-
-		PageReference pageRef = extension.saveUserTimeSheet();
+		PageReference pageRef = testUnit.save();
 		System.assertNotEquals(null,pageRef);
 
-		Test.setCurrentPageReference(pageRef);
-		Id savedTsId = ApexPages.currentPage().getParameters().get('id');
-		User_TimeSheet__c savedTs = EE_DAO_TimeSheetDao.getUserTimeSheetById(savedTsId);
+		testUnit.rejectUserTimeSheet();
 
-		extension = getExtension(savedTs);
-		extension.sentForApproval();
-		System.assertEquals(EE_SRV_TimeSheetManager.SENT_STATUS,extension.userTimeSheet.Status__c);
+		testUnit.save();
+		System.assertEquals(EE_SRV_TimeSheetManager.SUBMITTED_STATUS,testUnit.getCurrentUserTimeSheetStatus());
 
-		extension.userTimeSheet.Status__c = EE_SRV_TimeSheetManager.REJECTED_STATUS;
-		update extension.userTimeSheet;
+		testUnit.sentForApproval();
+		System.assertEquals(EE_SRV_TimeSheetManager.SENT_STATUS,testUnit.getCurrentUserTimeSheetStatus());
 
-		savedTS = EE_DAO_TimeSheetDao.getUserTimeSheetById(extension.userTimeSheet.ID);
-		extension = getExtension(savedTs);
-		System.assert(!extension.getDisableSaveButton());
-		pageRef = extension.saveUserTimeSheet();
-		System.assertEquals(EE_SRV_TimeSheetManager.SUBMITTED_STATUS,extension.userTimeSheet.Status__c);
+		testUnit.approveUserTimeSheet();
+		System.assertEquals(EE_SRV_TimeSheetManager.APPROVED_STATUS,testUnit.getCurrentUserTimeSheetStatus());
+		Test.stopTest();
+	}
 
-		Test.setCurrentPageReference(pageRef);
-		savedTsId = ApexPages.currentPage().getParameters().get('id');
-		savedTS = EE_DAO_TimeSheetDao.getUserTimeSheetById(savedTsId);
-		extension = getExtension(savedTs);
-		extension.sentForApproval();
-		System.assertEquals(EE_SRV_TimeSheetManager.SENT_STATUS,extension.userTimeSheet.Status__c);
+	@isTest
+	static void timeSheetAlreadySaved(){
+		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
 
-		extension.userTimeSheet.Status__c = EE_SRV_TimeSheetManager.APPROVED_STATUS;
-		update extension.userTimeSheet;
+		Test.startTest();
 
-		savedTS = EE_DAO_TimeSheetDao.getUserTimeSheetById(extension.userTimeSheet.ID);
-		extension = getExtension(savedTs);
-		extension.saveUserTimeSheet();
-		System.assertEquals(EE_SRV_TimeSheetManager.APPROVED_STATUS,extension.userTimeSheet.Status__c);
+		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
+		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
+		testUnit.initNewExtension();
+
+		PageReference pageRef = testUnit.save();
+		System.assertNotEquals(null,pageRef);
+
+		testUnit.setCurrentTestPage(testUnit.getPageReference());
+		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
+		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
+		testUnit.initNewExtension();
+		testUnit.save();
+
+		List<User_TimeSheet__c> userTimeSheets = [SELECT ID FROM User_TimeSheet__c];
+		System.assertEquals(1,userTimeSheets.size());
+		Test.stopTest();
+	}
+
+	@isTest
+	static void notAlignedTest(){
+		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
+
+		Test.startTest();
+		testUnit.initNewExtension();
+		System.assert(ApexPages.hasMessages());
 		Test.stopTest();
 	}
 
 	@isTest
 	static void vacationDaysTest(){
-		Company_Project__c project = EE_UTL_TestUtils.initTestUserAndProjectAssociation('Test Project');
-		TimeSheet__c timeSheet = EE_UTL_TestUtils.initDefaultTimeSheet();
-		List<Vacation_Days__c> vacationDays = EE_UTL_TestUtils.initDefaultVacationDaysForTimeSheet(timeSheet);
-		insert vacationDays;
+		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
+		List<Vacation_Days__c> vacationDays = testUnit.initVacationDays();
 
 		Test.startTest();
 		PageReference tsPage = Page.EE_UserTimeSheet;
-		Test.setCurrentPageReference(tsPage);
-		ApexPages.currentPage().getParameters().put('tsId',timeSheet.ID);
-		ApexPages.currentPage().getParameters().put('projectId',project.ID);
-
-		EE_CTRL_UserTimeSheetExtension extension = getExtension(new User_TimeSheet__c());
+		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
+		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
+		testUnit.initNewExtension();
 
 		for(Vacation_Days__c vacationDay:vacationDays){
-			Integer vacationWeekDay = EE_UTL_DateUtils.getWeekDayOfVacationDay(extension.timeSheet.StartDay__c,vacationDay.Vacation_Day__c);
-			System.assert(extension.vacationDays.contains(vacationWeekDay));
+			Integer vacationWeekDay = EE_UTL_DateUtils.getWeekDayOfVacationDay(testUnit.extension.timeSheet.StartDay__c,vacationDay.Vacation_Day__c);
+			System.assert(testUnit.extension.vacationDays.contains(vacationWeekDay));
 		}
 
-		System.assertEquals(25,extension.getItems().size());
+		System.assertEquals(25,testUnit.extension.getItems().size());
 
 		Test.stopTest();
 	}
