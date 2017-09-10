@@ -1,6 +1,12 @@
 @isTest
 public class EE_UTL_TestUtils {
 
+	public static final String SUCCESS = 'success';
+
+	public static final Integer HOURS_SIZE = 25;
+
+	public static final String DEFAULT_COUNTRY = 'PL';
+
 	public static TimeSheet__c  getTimeSheet(Date startDate){
 		return EE_SRV_TimeSheetManager.createTimeSheetProccess(startDate);
 	}
@@ -67,6 +73,26 @@ public class EE_UTL_TestUtils {
 		}
 
 		return vacationDays;
+	}
+
+	public static User getDefaultTestUser(){
+		Profile profileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator' LIMIT 1];
+
+		User usr = new User(LastName = 'Test',
+				FirstName='JASON',
+				Alias = 'jtest',
+				Email = 'test.live@asdf.com',
+				Username = 'test.live@asdf.com',
+				ProfileId = profileId.id,
+				TimeZoneSidKey = 'GMT',
+				LanguageLocaleKey = 'en_US',
+				EmailEncodingKey = 'UTF-8',
+				LocaleSidKey = 'en_US',
+				Country__c = DEFAULT_COUNTRY
+		);
+
+		insert usr;
+		return usr;
 	}
 
 

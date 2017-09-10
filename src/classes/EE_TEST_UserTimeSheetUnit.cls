@@ -1,5 +1,5 @@
 @isTest
-public class EE_Test_UserTimeSheetUnit {
+public class EE_TEST_UserTimeSheetUnit {
 
 	public Company_Project__c unitProject {get;set;}
 
@@ -9,7 +9,7 @@ public class EE_Test_UserTimeSheetUnit {
 
 	public EE_CTRL_UserTimeSheetExtension extension {get;set;}
 
-	public EE_Test_UserTimeSheetUnit(){
+	public EE_TEST_UserTimeSheetUnit(){
 		unitProject = EE_UTL_TestUtils.initTestUserAndProjectAssociation('Test Project');
 		unitTimeSheet = EE_UTL_TestUtils.initDefaultTimeSheet();
 
@@ -92,10 +92,15 @@ public class EE_Test_UserTimeSheetUnit {
 		return vacationDays;
 	}
 
-	public Vacation_Days__c createVacationDay(Date vacationDay){
-		Vacation_Days__c vacation = new Vacation_Days__c(TimeSheet__c = unitTimeSheet.ID,Country__c = 'PL'
-				,Vacation_Day__c = vacationDay);
+	public List<Vacation_Days__c> createVacationDay(List<Date> days) {
+		List<Vacation_Days__c> vacationDays = new List<Vacation_Days__c>();
+		for (Date day:days){
+			Vacation_Days__c vacation = new Vacation_Days__c(TimeSheet__c = unitTimeSheet.ID,
+					Country__c = EE_UTL_TestUtils.DEFAULT_COUNTRY,Vacation_Day__c = day);
+			vacationDays.add(vacation);
+		}
 
-		return vacation;
+		insert vacationDays;
+		return vacationDays;
 	}
 }

@@ -1,10 +1,6 @@
 @isTest
 public class EE_TEST_CTRL_UserTimeSheetExtension {
 
-	private static final String SUCCESS = 'success';
-
-	private static final Integer HOURS_SIZE = 25;
-
 	@testSetup
 	static void init(){
 		insert EE_UTL_TestUtils.getTimeSheetConfiguration();
@@ -12,145 +8,158 @@ public class EE_TEST_CTRL_UserTimeSheetExtension {
 
 	@isTest
 	static void userTimeSheetCreatedTest(){
-		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
+		User userTestPerformer = EE_UTL_TestUtils.getDefaultTestUser();
+		System.runAs(userTestPerformer){
+			EE_TEST_UserTimeSheetUnit testUnit = new EE_TEST_UserTimeSheetUnit();
+			Test.startTest();
 
-		Test.startTest();
+			testUnit.addParameterToPage('tsId', testUnit.unitTimeSheet.ID);
+			testUnit.addParameterToPage('projectId', testUnit.unitProject.ID);
+			testUnit.initNewExtension();
+			testUnit.save();
 
-		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
-		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
-		testUnit.initNewExtension();
-		testUnit.save();
+			System.assertEquals(EE_UTL_TestUtils.SUCCESS, testUnit.currentPage.getParameters().get('msg'));
+			System.assertEquals(testUnit.extension.userTimeSheet.ID, testUnit.currentPage.getParameters().get('id'));
 
-		System.assertEquals(SUCCESS,testUnit.currentPage.getParameters().get('msg'));
-		System.assertEquals(testUnit.extension.userTimeSheet.ID,testUnit.currentPage.getParameters().get('id'));
-
-		Test.stopTest();
+			Test.stopTest();
+		}
 	}
 
 	@isTest
 	static void userTimeSheetCreatedAndSendTest(){
-		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
+		User userTestPerformer = EE_UTL_TestUtils.getDefaultTestUser();
+		System.runAs(userTestPerformer){
+			EE_TEST_UserTimeSheetUnit testUnit = new EE_TEST_UserTimeSheetUnit();
+			Test.startTest();
 
-		Test.startTest();
+			testUnit.addParameterToPage('tsId', testUnit.unitTimeSheet.ID);
+			testUnit.addParameterToPage('projectId', testUnit.unitProject.ID);
+			testUnit.initNewExtension();
+			testUnit.save();
+			System.assertEquals(EE_UTL_TestUtils.SUCCESS, testUnit.currentPage.getParameters().get('msg'));
 
-		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
-		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
-		testUnit.initNewExtension();
-		testUnit.save();
-		System.assertEquals(SUCCESS,testUnit.currentPage.getParameters().get('msg'));
+			testUnit.sentForApproval();
+			System.assertEquals(EE_SRV_TimeSheetManager.SENT_STATUS, testUnit.getCurrentUserTimeSheetStatus());
 
-		testUnit.sentForApproval();
-		System.assertEquals(EE_SRV_TimeSheetManager.SENT_STATUS,testUnit.getCurrentUserTimeSheetStatus());
-
-		Test.stopTest();
+			Test.stopTest();
+		}
 	}
 
 	@isTest
 	static void userTimeSheetOverdueTest(){
-		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
-		testUnit.unitTimeSheet.ReportTime__c = Datetime.newInstance(1970,1,14);
-		update testUnit.unitTimeSheet;
+		User userTestPerformer = EE_UTL_TestUtils.getDefaultTestUser();
+		System.runAs(userTestPerformer){
+			EE_TEST_UserTimeSheetUnit testUnit = new EE_TEST_UserTimeSheetUnit();
+			testUnit.unitTimeSheet.ReportTime__c = Datetime.newInstance(1970,1,14);
+			update testUnit.unitTimeSheet;
 
-		Test.startTest();
+			Test.startTest();
 
-		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
-		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
-		testUnit.initNewExtension();
+			testUnit.addParameterToPage('tsId', testUnit.unitTimeSheet.ID);
+			testUnit.addParameterToPage('projectId', testUnit.unitProject.ID);
+			testUnit.initNewExtension();
 
-		System.assert(testUnit.extension.getDisableSaveButton());
-		System.assertEquals(EE_SRV_TimeSheetManager.OVERDUE_STATUS,testUnit.getCurrentUserTimeSheetStatus());
+			System.assert(testUnit.extension.getDisableSaveButton());
+			System.assertEquals(EE_SRV_TimeSheetManager.OVERDUE_STATUS, testUnit.getCurrentUserTimeSheetStatus());
 
-		PageReference pageRef = testUnit.save();
-		System.assertEquals(null,pageRef);
+			PageReference pageRef = testUnit.save();
+			System.assertEquals(null, pageRef);
 
-		testUnit.saveOverdue();
-		System.assert(testUnit.isRedirectAfterOverdueCheck());
+			testUnit.saveOverdue();
+			System.assert(testUnit.isRedirectAfterOverdueCheck());
 
-		Test.stopTest();
+			Test.stopTest();
+		}
 	}
 
 	@isTest
 	static void sentForApprovalAndApprovedTest(){
-		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
+		User userTestPerformer = EE_UTL_TestUtils.getDefaultTestUser();
+		System.runAs(userTestPerformer){
+			EE_TEST_UserTimeSheetUnit testUnit = new EE_TEST_UserTimeSheetUnit();
+			Test.startTest();
 
-		Test.startTest();
+			testUnit.addParameterToPage('tsId', testUnit.unitTimeSheet.ID);
+			testUnit.addParameterToPage('projectId', testUnit.unitProject.ID);
+			testUnit.initNewExtension();
 
-		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
-		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
-		testUnit.initNewExtension();
+			PageReference pageRef = testUnit.save();
+			System.assertNotEquals(null, pageRef);
 
-		PageReference pageRef = testUnit.save();
-		System.assertNotEquals(null,pageRef);
+			testUnit.sentForApproval();
 
-		testUnit.sentForApproval();
+			System.assertEquals(EE_SRV_TimeSheetManager.SENT_STATUS, testUnit.getCurrentUserTimeSheetStatus());
+			System.assert(testUnit.extension.userTimeSheet.Previously_Sent__c);
 
-		System.assertEquals(EE_SRV_TimeSheetManager.SENT_STATUS,testUnit.getCurrentUserTimeSheetStatus());
-		System.assert(testUnit.extension.userTimeSheet.Previously_Sent__c);
+			testUnit.approveUserTimeSheet();
 
-		testUnit.approveUserTimeSheet();
+			System.assert(testUnit.extension.getDisableSaveButton());
 
-		System.assert(testUnit.extension.getDisableSaveButton());
+			testUnit.save();
+			System.assertEquals(EE_SRV_TimeSheetManager.APPROVED_STATUS, testUnit.getCurrentUserTimeSheetStatus());
+			System.assert(testUnit.extension.userTimeSheet.Previously_Sent__c);
 
-		testUnit.save();
-		System.assertEquals(EE_SRV_TimeSheetManager.APPROVED_STATUS,testUnit.getCurrentUserTimeSheetStatus());
-		System.assert(testUnit.extension.userTimeSheet.Previously_Sent__c);
-
-		Test.stopTest();
+			Test.stopTest();
+		}
 	}
 
 	@isTest
 	static void rejectedAndApprovedTest(){
-		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
+		User userTestPerformer = EE_UTL_TestUtils.getDefaultTestUser();
+		System.runAs(userTestPerformer){
+			EE_TEST_UserTimeSheetUnit testUnit = new EE_TEST_UserTimeSheetUnit();
+			Test.startTest();
 
-		Test.startTest();
+			testUnit.addParameterToPage('tsId', testUnit.unitTimeSheet.ID);
+			testUnit.addParameterToPage('projectId', testUnit.unitProject.ID);
+			testUnit.initNewExtension();
 
-		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
-		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
-		testUnit.initNewExtension();
+			PageReference pageRef = testUnit.save();
+			System.assertNotEquals(null, pageRef);
 
-		PageReference pageRef = testUnit.save();
-		System.assertNotEquals(null,pageRef);
+			testUnit.rejectUserTimeSheet();
 
-		testUnit.rejectUserTimeSheet();
+			testUnit.save();
+			System.assertEquals(EE_SRV_TimeSheetManager.SUBMITTED_STATUS, testUnit.getCurrentUserTimeSheetStatus());
 
-		testUnit.save();
-		System.assertEquals(EE_SRV_TimeSheetManager.SUBMITTED_STATUS,testUnit.getCurrentUserTimeSheetStatus());
+			testUnit.sentForApproval();
+			System.assertEquals(EE_SRV_TimeSheetManager.SENT_STATUS, testUnit.getCurrentUserTimeSheetStatus());
 
-		testUnit.sentForApproval();
-		System.assertEquals(EE_SRV_TimeSheetManager.SENT_STATUS,testUnit.getCurrentUserTimeSheetStatus());
-
-		testUnit.approveUserTimeSheet();
-		System.assertEquals(EE_SRV_TimeSheetManager.APPROVED_STATUS,testUnit.getCurrentUserTimeSheetStatus());
-		Test.stopTest();
+			testUnit.approveUserTimeSheet();
+			System.assertEquals(EE_SRV_TimeSheetManager.APPROVED_STATUS, testUnit.getCurrentUserTimeSheetStatus());
+			Test.stopTest();
+		}
 	}
 
 	@isTest
 	static void timeSheetAlreadySaved(){
-		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
+		User userTestPerformer = EE_UTL_TestUtils.getDefaultTestUser();
+		System.runAs(userTestPerformer){
+			EE_TEST_UserTimeSheetUnit testUnit = new EE_TEST_UserTimeSheetUnit();
+			Test.startTest();
 
-		Test.startTest();
+			testUnit.addParameterToPage('tsId', testUnit.unitTimeSheet.ID);
+			testUnit.addParameterToPage('projectId', testUnit.unitProject.ID);
+			testUnit.initNewExtension();
 
-		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
-		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
-		testUnit.initNewExtension();
+			PageReference pageRef = testUnit.save();
+			System.assertNotEquals(null, pageRef);
 
-		PageReference pageRef = testUnit.save();
-		System.assertNotEquals(null,pageRef);
+			testUnit.setCurrentTestPage(testUnit.getPageReference());
+			testUnit.addParameterToPage('tsId', testUnit.unitTimeSheet.ID);
+			testUnit.addParameterToPage('projectId', testUnit.unitProject.ID);
+			testUnit.initNewExtension();
+			testUnit.save();
 
-		testUnit.setCurrentTestPage(testUnit.getPageReference());
-		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
-		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
-		testUnit.initNewExtension();
-		testUnit.save();
-
-		List<User_TimeSheet__c> userTimeSheets = [SELECT ID FROM User_TimeSheet__c];
-		System.assertEquals(1,userTimeSheets.size());
-		Test.stopTest();
+			List<User_TimeSheet__c> userTimeSheets = [SELECT ID FROM User_TimeSheet__c];
+			System.assertEquals(1, userTimeSheets.size());
+			Test.stopTest();
+		}
 	}
 
 	@isTest
 	static void notAlignedTest(){
-		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
+		EE_TEST_UserTimeSheetUnit testUnit = new EE_TEST_UserTimeSheetUnit();
 
 		Test.startTest();
 		testUnit.initNewExtension();
@@ -160,65 +169,74 @@ public class EE_TEST_CTRL_UserTimeSheetExtension {
 
 	@isTest
 	static void vacationDaysTest(){
-		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
-		List<Vacation_Days__c> vacationDays = testUnit.initVacationDays();
+		User userTestPerformer = EE_UTL_TestUtils.getDefaultTestUser();
+		System.runAs(userTestPerformer){
+			EE_TEST_UserTimeSheetUnit testUnit = new EE_TEST_UserTimeSheetUnit();
+			List<Vacation_Days__c> vacationDays = testUnit.initVacationDays();
 
-		Test.startTest();
+			Test.startTest();
 
-		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
-		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
-		testUnit.initNewExtension();
+			testUnit.addParameterToPage('tsId', testUnit.unitTimeSheet.ID);
+			testUnit.addParameterToPage('projectId', testUnit.unitProject.ID);
+			testUnit.initNewExtension();
 
-		for(Vacation_Days__c vacationDay:vacationDays){
-			Integer vacationWeekDay = EE_UTL_DateUtils.getWeekDayOfVacationDay(testUnit.extension.timeSheet.StartDay__c,vacationDay.Vacation_Day__c);
-			System.assert(testUnit.extension.vacationDays.contains(vacationWeekDay));
+			for (Vacation_Days__c vacationDay:vacationDays) {
+				Integer vacationWeekDay =
+						EE_UTL_DateUtils.getWeekDayOfVacationDay(testUnit.extension.timeSheet.StartDay__c,
+								vacationDay.Vacation_Day__c);
+				System.assert(testUnit.extension.vacationDays.contains(vacationWeekDay));
+			}
+
+			Test.stopTest();
 		}
-
-		Test.stopTest();
 	}
 
 	@isTest
 	static void selectedVacationDaysTest(){
-		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
-		List<Vacation_Days__c> vacationDays = new List<Vacation_Days__c>();
-		vacationDays.add(testUnit.createVacationDay(Date.newInstance(2099,1,12)));
-		vacationDays.add(testUnit.createVacationDay(Date.newInstance(2099,1,14)));
-		vacationDays.add(testUnit.createVacationDay(Date.newInstance(2099,1,16)));
-		vacationDays.add(testUnit.createVacationDay(Date.newInstance(2099,1,17)));
+		User userTestPerformer = EE_UTL_TestUtils.getDefaultTestUser();
+		System.runAs(userTestPerformer){
+			EE_TEST_UserTimeSheetUnit testUnit = new EE_TEST_UserTimeSheetUnit();
+			List<Date> days= new List<Date>();
+			days.add(Date.newInstance(2099,1,12));
+			days.add(Date.newInstance(2099,1,14));
+			days.add(Date.newInstance(2099,1,16));
+			days.add(Date.newInstance(2099,1,17));
 
-		insert vacationDays;
+			testUnit.createVacationDay(days);
+			Test.startTest();
 
-		Test.startTest();
+			testUnit.addParameterToPage('tsId', testUnit.unitTimeSheet.ID);
+			testUnit.addParameterToPage('projectId', testUnit.unitProject.ID);
+			testUnit.initNewExtension();
 
-		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
-		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
-		testUnit.initNewExtension();
+			System.assert(testUnit.extension.mondayDisabled);
+			System.assert(testUnit.extension.wednesdayDisabled);
+			System.assert(testUnit.extension.fridayDisabled);
+			System.assert(testUnit.extension.saturdayDisabled);
 
-		System.assert(testUnit.extension.mondayDisabled);
-		System.assert(testUnit.extension.wednesdayDisabled);
-		System.assert(testUnit.extension.fridayDisabled);
-		System.assert(testUnit.extension.saturdayDisabled);
+			System.assert(!testUnit.extension.tuesdayDisabled);
+			System.assert(!testUnit.extension.thursdayDisabled);
+			System.assert(!testUnit.extension.sundayDisabled);
 
-		System.assert(!testUnit.extension.tuesdayDisabled);
-		System.assert(!testUnit.extension.thursdayDisabled);
-		System.assert(!testUnit.extension.sundayDisabled);
-
-		Test.stopTest();
+			Test.stopTest();
+		}
 
 	}
 
 	@isTest
 	static void hoursItemSizeTest(){
-		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
+		User userTestPerformer = EE_UTL_TestUtils.getDefaultTestUser();
+		System.runAs(userTestPerformer){
+			EE_TEST_UserTimeSheetUnit testUnit = new EE_TEST_UserTimeSheetUnit();
+			Test.startTest();
 
-		Test.startTest();
+			testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
+			testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
+			testUnit.initNewExtension();
 
-		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
-		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
-		testUnit.initNewExtension();
-
-		System.assertEquals(HOURS_SIZE,testUnit.extension.getItems().size());
-		Test.stopTest();
+			System.assertEquals(EE_UTL_TestUtils.HOURS_SIZE,testUnit.extension.getItems().size());
+			Test.stopTest();
+		}
 
 
 	}
