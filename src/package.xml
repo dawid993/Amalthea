@@ -9,11 +9,15 @@
         <members>AMT_DAO_OperatorUtils</members>
         <members>EE_CTRL_UserTimeSheetExtension</members>
         <members>EE_DAO_TimeSheetDao</members>
+        <members>EE_DAO_UserDao</members>
         <members>EE_JOB_NewTimeSheetCreator</members>
         <members>EE_SRV_TimeSheetCreator</members>
         <members>EE_SRV_TimeSheetManager</members>
+        <members>EE_TEST_CTRL_UserTimeSheetExtension</members>
+        <members>EE_Test_UserTimeSheetUnit</members>
         <members>EE_UTL_DateUtils</members>
         <members>EE_UTL_JobsUtils</members>
+        <members>EE_UTL_TestUtils</members>
         <name>ApexClass</name>
     </types>
     <types>
@@ -30,18 +34,15 @@
         <members>Company_Project__c</members>
         <members>TimeSheetConfiguration__c</members>
         <members>TimeSheet__c</members>
+        <members>User</members>
         <members>User_TimeSheet__c</members>
         <members>Vacation_Days__c</members>
         <name>CustomObject</name>
-    </types>
-    <types>
-        <members>TimeSheet__c-TimeSheet Layout</members>
-        <name>Layout</name>
     </types>
     <types>
         <members>bootstrap</members>
         <members>jQuery321</members>
         <name>StaticResource</name>
     </types>
-    <version>36.0</version>
+    <version>40.0</version>
 </Package>

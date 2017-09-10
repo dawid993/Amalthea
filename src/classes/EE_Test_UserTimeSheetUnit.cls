@@ -91,4 +91,11 @@ public class EE_Test_UserTimeSheetUnit {
 
 		return vacationDays;
 	}
+
+	public Vacation_Days__c createVacationDay(Date vacationDay){
+		Vacation_Days__c vacation = new Vacation_Days__c(TimeSheet__c = unitTimeSheet.ID,Country__c = 'PL'
+				,Vacation_Day__c = vacationDay);
+
+		return vacation;
+	}
 }

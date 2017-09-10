@@ -3,15 +3,11 @@ public class EE_TEST_CTRL_UserTimeSheetExtension {
 
 	private static final String SUCCESS = 'success';
 
+	private static final Integer HOURS_SIZE = 25;
+
 	@testSetup
 	static void init(){
 		insert EE_UTL_TestUtils.getTimeSheetConfiguration();
-	}
-
-	private static EE_CTRL_UserTimeSheetExtension getExtension(User_TimeSheet__c record){
-		ApexPages.StandardController stdController = new ApexPages.StandardController(record);
-		EE_CTRL_UserTimeSheetExtension extension = new EE_CTRL_UserTimeSheetExtension(stdController);
-		return extension;
 	}
 
 	@isTest
@@ -168,7 +164,7 @@ public class EE_TEST_CTRL_UserTimeSheetExtension {
 		List<Vacation_Days__c> vacationDays = testUnit.initVacationDays();
 
 		Test.startTest();
-		PageReference tsPage = Page.EE_UserTimeSheet;
+
 		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
 		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
 		testUnit.initNewExtension();
@@ -178,9 +174,53 @@ public class EE_TEST_CTRL_UserTimeSheetExtension {
 			System.assert(testUnit.extension.vacationDays.contains(vacationWeekDay));
 		}
 
-		System.assertEquals(25,testUnit.extension.getItems().size());
+		Test.stopTest();
+	}
+
+	@isTest
+	static void selectedVacationDaysTest(){
+		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
+		List<Vacation_Days__c> vacationDays = new List<Vacation_Days__c>();
+		vacationDays.add(testUnit.createVacationDay(Date.newInstance(2099,1,12)));
+		vacationDays.add(testUnit.createVacationDay(Date.newInstance(2099,1,14)));
+		vacationDays.add(testUnit.createVacationDay(Date.newInstance(2099,1,16)));
+		vacationDays.add(testUnit.createVacationDay(Date.newInstance(2099,1,17)));
+
+		insert vacationDays;
+
+		Test.startTest();
+
+		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
+		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
+		testUnit.initNewExtension();
+
+		System.assert(testUnit.extension.mondayDisabled);
+		System.assert(testUnit.extension.wednesdayDisabled);
+		System.assert(testUnit.extension.fridayDisabled);
+		System.assert(testUnit.extension.saturdayDisabled);
+
+		System.assert(!testUnit.extension.tuesdayDisabled);
+		System.assert(!testUnit.extension.thursdayDisabled);
+		System.assert(!testUnit.extension.sundayDisabled);
 
 		Test.stopTest();
+
+	}
+
+	@isTest
+	static void hoursItemSizeTest(){
+		EE_Test_UserTimeSheetUnit testUnit = new EE_Test_UserTimeSheetUnit();
+
+		Test.startTest();
+
+		testUnit.addParameterToPage('tsId',testUnit.unitTimeSheet.ID);
+		testUnit.addParameterToPage('projectId',testUnit.unitProject.ID);
+		testUnit.initNewExtension();
+
+		System.assertEquals(HOURS_SIZE,testUnit.extension.getItems().size());
+		Test.stopTest();
+
+
 	}
 
 }

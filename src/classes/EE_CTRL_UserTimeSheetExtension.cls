@@ -202,7 +202,14 @@ public with sharing class EE_CTRL_UserTimeSheetExtension {
         }
 
         vacationDays = new Set<Integer>();
-        List<Vacation_Days__c> days = [SELECT Country__c,Vacation_Day__c FROM Vacation_Days__c WHERE  TimeSheet__c=:timeSheet.ID]; 
+        List<Vacation_Days__c> days = [SELECT
+        								Country__c,
+        								Vacation_Day__c
+        							  FROM
+        							  	Vacation_Days__c
+        							  WHERE
+        							  	TimeSheet__c=:timeSheet.ID
+										AND Country__c = :getCurrentUserCountry()];
 
         for(Vacation_Days__c vacationDay:days){
 			Integer vacationWeekDay = EE_UTL_DateUtils.getWeekDayOfVacationDay(this.timeSheet.StartDay__c,vacationDay.Vacation_Day__c);
@@ -256,6 +263,11 @@ public with sharing class EE_CTRL_UserTimeSheetExtension {
         User_TimeSheet__c duplicatedTimeSheet = getUserTimeSheet(this.userTimeSheet.TimeSheet__c,this.userTimeSheet.Project_Id__c,UserInfo.getUserId());
         return duplicatedTimeSheet != null && duplicatedTimeSheet.Id != this.userTimeSheet.Id;
     }
+
+	private String getCurrentUserCountry(){
+		User currentUser = EE_DAO_UserDao.getUserById(UserInfo.getUserId());
+		return currentUser.Country__c;
+	}
 
      private class WeekDay{
         public String label {get;set;}
