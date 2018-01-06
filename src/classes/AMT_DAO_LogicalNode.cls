@@ -18,7 +18,6 @@ public class AMT_DAO_LogicalNode implements AMT_DAO_Node{
 		}else{
 			this.expression = evaluteForAndOrOperators();
 		}
-
 		return this.getExpression();
 	}
 
@@ -56,7 +55,8 @@ public class AMT_DAO_LogicalNode implements AMT_DAO_Node{
 
 	private String evaluateForNotOperator(){
 		String operatorSign = AMT_DAO_OperatorUtils.operatorToSoqlSign.get(logicalOperator.name());
-		return '('+operatorSign+ this.leftChild.evaluate()+')';
+		return AMT_DAO_UTL_DaoUtils.insertBrackets
+				(AMT_DAO_UTL_DaoUtils.insertSpaces(operatorSign)+ this.leftChild.evaluate());
 	}
 
 	private String evaluteForAndOrOperators(){
@@ -64,7 +64,8 @@ public class AMT_DAO_LogicalNode implements AMT_DAO_Node{
 		try{
 			String leftChildEvaluate = this.leftChild.evaluate();
 			String rightChildEvaluate = this.rightChild.evaluate();		
-			return '('+leftChildEvaluate+operatorSign+rightChildEvaluate+')';		
+			return AMT_DAO_UTL_DaoUtils.insertBrackets
+					(leftChildEvaluate+AMT_DAO_UTL_DaoUtils.insertSpaces(operatorSign)+rightChildEvaluate);
 		}catch(Exception ex){
 			throw new AMT_DAO_NodeException('Logical tree has inproper structure. Please check your statements.');
 		}

@@ -1,7 +1,11 @@
-public class AMT_DAO_TreeConditionBuilderManagerImp implements AMT_DAO_TreeConditionBuilderManager {
+public class AMT_DAO_ConditionBuilderStructureImp implements AMT_DAO_ConditionBuilderStructure {
 	public AMT_DAO_Node rootNode;	
 
-	public Boolean addNode(AMT_DAO_Node newNode,AMT_DAO_Node currentNode){
+	public Boolean addNode(AMT_DAO_Node newNode){
+		return addNode(newNode,rootNode);
+	}
+
+	private Boolean addNode(AMT_DAO_Node newNode,AMT_DAO_Node currentNode){
 		if(currentNode == null){
 			this.rootNode = newNode;			
 			return true;

@@ -42,10 +42,32 @@ public class AMT_DAO_UTL_DaoUtils {
 	}
 
 	public static String insertApostrophes(String value){
-		return '\''+value+'\'';
+		if(String.isNotBlank(value)){
+			return '\''+value+'\'';
+		}else{
+			return null;
+		}
 	}
 
 	public static String insertBrackets(String value){
-		return '('+value+')';
+		if(String.isNotBlank(value)){
+			return '('+value+')';
+		}else{
+			return null;
+		}
+	}
+
+	public static String insertSpaces(String value){
+		if(String.isNotBlank(value)){
+			return ' '+value+' ';
+		}else{
+			return null;
+		}
+	}
+
+	public static void escapeSingleQuotes(List<String> values){
+		for(Integer i =0; i<values.size(); i++){
+			values[i] = String.escapeSingleQuotes(values[i]);
+		}
 	}
 }

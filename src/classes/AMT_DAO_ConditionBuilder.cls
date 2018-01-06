@@ -2,83 +2,29 @@ public interface AMT_DAO_ConditionBuilder {
 
 	String evaluate();
 
-	AMT_DAO_ConditionBuilder makeAnd();
+	Boolean preapreAndInsertAndNode();
 
-	AMT_DAO_ConditionBuilder makeOr();
+	Boolean preapreAndInsertOrNode();
 
-	AMT_DAO_ConditionBuilder makeNot();
+	Boolean preapreAndInsertNotNode();
 
-	AMT_DAO_ConditionBuilder makeEq(String fieldName,String value);
+	Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,String value);
 
-	AMT_DAO_ConditionBuilder makeEq(String fieldName,Object value);	
+	Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Object value);
 
-	AMT_DAO_ConditionBuilder makeEq(String fieldName,DateTime value,String timeZone);
+	Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Date value);
 
-	AMT_DAO_ConditionBuilder makeEq(String fieldName,AMT_DAO_DateLiterals literalValue);
+	Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,List<String> value);
 
-	AMT_DAO_ConditionBuilder makeEq(AMT_DAO_DateFunction dateFunction,Object additionalValue);
+	Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,List<Object> value);
 
-	AMT_DAO_ConditionBuilder makeNotEq(String fieldName,String value);
+	Boolean preapreAndInsertNode(
+			AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,DateTime value,String timeZone);
 
-	AMT_DAO_ConditionBuilder makeNotEq(String fieldName,Object value);	
+	Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,
+								 String fieldName,AMT_DAO_DateLiterals value);
 
-	AMT_DAO_ConditionBuilder makeNotEq(String fieldName,DateTime value,String timeZone);
+	Boolean preapreAndInsertNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,
+								 AMT_DAO_DateFunction value,Object additionalValue);
 
-	AMT_DAO_ConditionBuilder makeNotEq(String fieldName,AMT_DAO_DateLiterals literalValue);
-
-	AMT_DAO_ConditionBuilder makeNotEq(AMT_DAO_DateFunction dateFunction,Object additionalValue);
-
-	AMT_DAO_ConditionBuilder makeLt(String fieldName,String value);
-
-	AMT_DAO_ConditionBuilder makeLt(String fieldName,Object value);	
-
-	AMT_DAO_ConditionBuilder makeLt(String fieldName,DateTime value,String timeZone);
-
-	AMT_DAO_ConditionBuilder makeLt(String fieldName,AMT_DAO_DateLiterals literalValue);
-
-	AMT_DAO_ConditionBuilder makeLt(AMT_DAO_DateFunction dateFunction,Object additionalValue);
-
-	AMT_DAO_ConditionBuilder makeGt(String fieldName,String value);
-
-	AMT_DAO_ConditionBuilder makeGt(String fieldName,Object value);
-
-	AMT_DAO_ConditionBuilder makeGt(String fieldName,DateTime value,String timeZone);
-
-	AMT_DAO_ConditionBuilder makeGt(String fieldName,AMT_DAO_DateLiterals literalValue);
-
-	AMT_DAO_ConditionBuilder makeGt(AMT_DAO_DateFunction dateFunction,Object additionalValue);
-
-	AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,String value);
-
-	AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,Object value);	
-
-	AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,DateTime value,String timeZone);
-
-	AMT_DAO_ConditionBuilder makeLtOrEq(String fieldName,AMT_DAO_DateLiterals literalValue);
-
-	AMT_DAO_ConditionBuilder makeLtOrEq(AMT_DAO_DateFunction dateFunction,Object additionalValue);
-
-	AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,String value);
-
-	AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,Object value);	
-
-	AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,DateTime value,String timeZone);
-
-	AMT_DAO_ConditionBuilder makeGtOrEq(String fieldName,AMT_DAO_DateLiterals literalValue);
-
-	AMT_DAO_ConditionBuilder makeGtOrEq(AMT_DAO_DateFunction dateFunction,Object additionalValue);
-
-	AMT_DAO_ConditionBuilder makeLike(String fieldName,String value);
-
-	AMT_DAO_ConditionBuilder makeIn(String fieldName,List<String> values);
-
-	AMT_DAO_ConditionBuilder makeIn(String fieldName,List<Object> values);	
-
-	AMT_DAO_ConditionBuilder makeNotIn(String fieldName,List<String> values);
-
-	AMT_DAO_ConditionBuilder makeNotIn(String fieldName,List<Object> values);	
-
-	AMT_DAO_ConditionBuilder makeIncludes(String fieldName,List<String> value);
-
-	AMT_DAO_ConditionBuilder makeExcludes(String fieldName,List<String> value);
 }
