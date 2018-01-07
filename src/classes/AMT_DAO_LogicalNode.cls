@@ -8,6 +8,9 @@ public class AMT_DAO_LogicalNode implements AMT_DAO_Node{
 
 	public AMT_DAO_Node rightChild {get;set;}
 
+	public AMT_DAO_LogicalNode() {
+	}
+
 	public AMT_DAO_LogicalNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator) {
 		this.logicalOperator = operator;
 	}
@@ -19,6 +22,10 @@ public class AMT_DAO_LogicalNode implements AMT_DAO_Node{
 			this.expression = evaluteForAndOrOperators();
 		}
 		return this.getExpression();
+	}
+
+	public void setOperator(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator){
+		this.logicalOperator = operator;
 	}
 
 	public Boolean isLeaf(){
@@ -37,7 +44,6 @@ public class AMT_DAO_LogicalNode implements AMT_DAO_Node{
 		if(this.isNotNode()){
 			throw new AMT_DAO_NodeException('Not Node can not have right child.');
 		}
-
 		return this.rightChild;
 	}
 
@@ -46,11 +52,19 @@ public class AMT_DAO_LogicalNode implements AMT_DAO_Node{
 	}
 
 	public String getLeftArgument(){
-		throw new AMT_DAO_NodeException('Left Operator not present in logical node.');
+		throw new AMT_DAO_NodeException('Left argument not present in logical node.');
 	}
 
 	public String getRightArgument(){
-		throw new AMT_DAO_NodeException('Right Operator not present in logical node.');
+		throw new AMT_DAO_NodeException('Right argument not present in logical node.');
+	}
+
+	public void setRightArgument(String rightArgument){
+		throw new AMT_DAO_NodeException('Right argument not present in logical node.');
+	}
+
+	public void setLeftArgument(String leftArgument){
+		throw new AMT_DAO_NodeException('Left argument not present in logical node.');
 	}
 
 	private String evaluateForNotOperator(){

@@ -16,4 +16,10 @@ public interface AMT_DAO_Node {
 
 	String getRightArgument();
 
+	void setOperator(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator);
+
+	void setRightArgument(String rightArgument);
+
+	void setLeftArgument(String rightArgument);
+
 }

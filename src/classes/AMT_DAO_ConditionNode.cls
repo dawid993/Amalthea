@@ -8,6 +8,10 @@
 
 	private String expression;
 
+	 public AMT_DAO_ConditionNode(){
+
+	 }
+
 	public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Object value){
 		if(operator == null || String.isBlank(fieldName)){
 			throw new AMT_DAO_NodeException('Node can not be created because key parameters are not initialized!');
@@ -33,6 +37,18 @@
 				(leftArgument+AMT_DAO_UTL_DaoUtils.insertSpaces(operatorSign)+rightArgument);
 		return this.getExpression();
 	}
+
+	 public void setOperator(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator){
+		 this.conditionOperator = operator;
+	 }
+
+	 public void setRightArgument(String rightArgument){
+		 this.rightArgument = rightArgument;
+	 }
+
+	 public void setLeftArgument(String leftArgument){
+		this.leftArgument = leftArgument;
+	 }
 
 	public Boolean isLeaf(){
 		return true;

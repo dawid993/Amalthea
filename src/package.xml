@@ -14,11 +14,16 @@
         <members>AMT_DAO_OperatorUtils</members>
         <members>AMT_DAO_QueryBuilder</members>
         <members>AMT_DAO_QueryException</members>
-        <members>AMT_DAO_ServiceContainer</members>
+        <members>AMT_DAO_ServiceConstructionException</members>
+        <members>AMT_DAO_ServiceProvider</members>
         <members>AMT_DAO_UTL_DaoUtils</members>
         <members>AMT_DAO_WhereConditionBuilderImp</members>
         <members>AMT_DAO_WhereConditionBuilderTest</members>
         <name>ApexClass</name>
+    </types>
+    <types>
+        <members>AMT_ServiceConfiguration__c</members>
+        <name>CustomObject</name>
     </types>
     <version>36.0</version>
 </Package>
