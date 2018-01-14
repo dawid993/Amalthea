@@ -1,6 +1,6 @@
 public class AMT_DAO_LogicalNode implements AMT_DAO_Node{
 
-	private AMT_DAO_OperatorUtils.AMT_DAO_Operator logicalOperator;
+	private AMT_DAO_Operator logicalOperator;
 
 	private String expression;
 
@@ -11,7 +11,7 @@ public class AMT_DAO_LogicalNode implements AMT_DAO_Node{
 	public AMT_DAO_LogicalNode() {
 	}
 
-	public AMT_DAO_LogicalNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator) {
+	public AMT_DAO_LogicalNode(AMT_DAO_Operator operator) {
 		this.logicalOperator = operator;
 	}
 
@@ -24,7 +24,7 @@ public class AMT_DAO_LogicalNode implements AMT_DAO_Node{
 		return this.getExpression();
 	}
 
-	public void setOperator(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator){
+	public void setOperator(AMT_DAO_Operator operator){
 		this.logicalOperator = operator;
 	}
 
@@ -47,7 +47,7 @@ public class AMT_DAO_LogicalNode implements AMT_DAO_Node{
 		return this.rightChild;
 	}
 
-	public AMT_DAO_OperatorUtils.AMT_DAO_Operator getOperator(){
+	public AMT_DAO_Operator getOperator(){
 		return this.logicalOperator;
 	}
 
@@ -86,6 +86,6 @@ public class AMT_DAO_LogicalNode implements AMT_DAO_Node{
 	}
 
 	private Boolean isNotNode(){
-		return this.getOperator() == AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EXP;
+		return this.getOperator() == AMT_DAO_Operator.NOT_EXP;
 	}
 }

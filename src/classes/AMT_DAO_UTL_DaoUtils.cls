@@ -28,7 +28,7 @@ public class AMT_DAO_UTL_DaoUtils {
 		return AMT_DAO_UTL_DaoUtils.insertBrackets(values);
 	}	
 
-	public static String dateLiteralToString(AMT_DAO_DateLiterals literal,Integer value){
+	public static String dateLiteralToString(AMT_DAO_DateLiteralEvaluator literal, Integer value){
 		if(literal == null ||
 			 (value == null && literal.literal.name().contains(DATE_LITERALS_SUB_SIGN))){
 			throw new AMT_DAO_NodeException('Can not create Date Literal expression. Passed parameters are null!');
@@ -68,6 +68,12 @@ public class AMT_DAO_UTL_DaoUtils {
 	public static void escapeSingleQuotes(List<String> values){
 		for(Integer i =0; i<values.size(); i++){
 			values[i] = String.escapeSingleQuotes(values[i]);
+		}
+	}
+
+	public static void escapeSingleQuotes(List<Object> values){
+		for(Integer i =0; i<values.size(); i++){
+			values[i] = String.escapeSingleQuotes(String.valueOf(values[i]));
 		}
 	}
 }

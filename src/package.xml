@@ -2,11 +2,12 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>AMT_DAO_ConditionBuilder</members>
-        <members>AMT_DAO_ConditionBuilderStructure</members>
         <members>AMT_DAO_ConditionBuilderStructureImp</members>
+        <members>AMT_DAO_ConditionBuilderTreeStructure</members>
         <members>AMT_DAO_ConditionNode</members>
         <members>AMT_DAO_DateFunction</members>
-        <members>AMT_DAO_DateLiterals</members>
+        <members>AMT_DAO_DateLiteral</members>
+        <members>AMT_DAO_DateLiteralEvaluator</members>
         <members>AMT_DAO_LogicalNode</members>
         <members>AMT_DAO_Node</members>
         <members>AMT_DAO_NodeException</members>

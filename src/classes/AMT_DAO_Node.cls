@@ -10,13 +10,13 @@ public interface AMT_DAO_Node {
 
 	AMT_DAO_Node getRightChild();
 
-	AMT_DAO_OperatorUtils.AMT_DAO_Operator getOperator();
+	AMT_DAO_Operator getOperator();
 
 	String getLeftArgument();
 
 	String getRightArgument();
 
-	void setOperator(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator);
+	void setOperator(AMT_DAO_Operator operator);
 
 	void setRightArgument(String rightArgument);
 

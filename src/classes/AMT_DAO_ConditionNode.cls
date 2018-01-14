@@ -1,6 +1,6 @@
  public class AMT_DAO_ConditionNode implements AMT_DAO_Node{
 
-	private AMT_DAO_OperatorUtils.AMT_DAO_Operator conditionOperator;
+	private AMT_DAO_Operator conditionOperator;
 
 	private String leftArgument;
 
@@ -12,7 +12,7 @@
 
 	 }
 
-	public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Object value){
+	public AMT_DAO_ConditionNode(AMT_DAO_Operator operator,String fieldName,Object value){
 		if(operator == null || String.isBlank(fieldName)){
 			throw new AMT_DAO_NodeException('Node can not be created because key parameters are not initialized!');
 		}		
@@ -22,7 +22,7 @@
 
 	}
 
-	 public AMT_DAO_ConditionNode(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator,String fieldName,Date value){
+	 public AMT_DAO_ConditionNode(AMT_DAO_Operator operator,String fieldName,Date value){
 		 if(operator == null || String.isBlank(fieldName)){
 			 throw new AMT_DAO_NodeException('Node can not be created because key parameters are not initialized!');
 		 }
@@ -38,7 +38,7 @@
 		return this.getExpression();
 	}
 
-	 public void setOperator(AMT_DAO_OperatorUtils.AMT_DAO_Operator operator){
+	 public void setOperator(AMT_DAO_Operator operator){
 		 this.conditionOperator = operator;
 	 }
 
@@ -66,7 +66,7 @@
 		throw new AMT_DAO_NodeException('Right Child not present in condition node.');
 	}
 
-	public AMT_DAO_OperatorUtils.AMT_DAO_Operator getOperator(){
+	public AMT_DAO_Operator getOperator(){
 		return this.conditionOperator;
 	}
 

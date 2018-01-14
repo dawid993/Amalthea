@@ -1,4 +1,4 @@
-public interface AMT_DAO_ConditionBuilderStructure {
+public interface AMT_DAO_ConditionBuilderTreeStructure {
 
 	Boolean addNode(AMT_DAO_Node newNode);
 

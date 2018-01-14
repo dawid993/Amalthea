@@ -1,4 +1,4 @@
-public class AMT_DAO_ConditionBuilderStructureImp implements AMT_DAO_ConditionBuilderStructure {
+public class AMT_DAO_ConditionBuilderStructureImp implements AMT_DAO_ConditionBuilderTreeStructure {
 	public AMT_DAO_Node rootNode;	
 
 	public Boolean addNode(AMT_DAO_Node newNode){
@@ -25,7 +25,7 @@ public class AMT_DAO_ConditionBuilderStructureImp implements AMT_DAO_ConditionBu
 				return true;
 			}
 
-			if(currentNode.getOperator() == AMT_DAO_OperatorUtils.AMT_DAO_Operator.NOT_EXP){
+			if(currentNode.getOperator() == AMT_DAO_Operator.NOT_EXP){
 				return false;
 			}
 

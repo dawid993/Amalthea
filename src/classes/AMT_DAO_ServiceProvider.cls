@@ -20,11 +20,11 @@ public class AMT_DAO_ServiceProvider {
 		return conditionBuilder;
 	}
 
-	public static AMT_DAO_ConditionBuilderStructure getConditionBuilderStructure(){
-		AMT_DAO_ConditionBuilderStructure conditionStructure;
+	public static AMT_DAO_ConditionBuilderTreeStructure getConditionBuilderStructure(){
+		AMT_DAO_ConditionBuilderTreeStructure conditionStructure;
 		String conditionStructureImplementation =
 				AMT_DAO_ServiceProvider.getImplementationName(AMT_DAO_ServiceProvider.CONDITION_BUILDER_STRUCTURE_SETTING);
-		conditionStructure =(AMT_DAO_ConditionBuilderStructure)
+		conditionStructure =(AMT_DAO_ConditionBuilderTreeStructure)
 				AMT_DAO_ServiceProvider.constructObjectForService(conditionStructureImplementation);
 		return conditionStructure;
 	}
