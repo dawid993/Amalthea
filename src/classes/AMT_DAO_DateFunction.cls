@@ -23,7 +23,7 @@ public with sharing class AMT_DAO_DateFunction {
 		FISCAL_QUARTER,
 		FISCAL_YEAR,
 		HOUR_IN_DAY,
-		WEEK_IN_MONTH, 
+		WEEK_IN_MONTH,
 		WEEK_IN_YEAR
 	}
 }

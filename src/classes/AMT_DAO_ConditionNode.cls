@@ -1,4 +1,4 @@
- public class AMT_DAO_ConditionNode implements AMT_DAO_Node{
+public class AMT_DAO_ConditionNode implements AMT_DAO_Node{
 
 	private AMT_DAO_Operator conditionOperator;
 

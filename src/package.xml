@@ -20,6 +20,7 @@
         <members>AMT_DAO_UTL_DaoUtils</members>
         <members>AMT_DAO_WhereConditionBuilderImp</members>
         <members>AMT_DAO_WhereConditionBuilderTest</members>
+        <members>ATM_DAO_Order</members>
         <name>ApexClass</name>
     </types>
     <types>
