@@ -14,5 +14,6 @@
     "username": "dawidorg2@gmail.com",
     "password": "Req8u!666eV4tAdtpGc3duZPLXmZsPv1o7",
     "url": "https://login.salesforce.com",
-    "autoCompile": true
+    "autoCompile": true,
+    "src": "src"
 }

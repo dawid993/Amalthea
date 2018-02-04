@@ -1,10 +1,5 @@
-/**
- * Created by Dawid on 2017-10-22.
- */
 public class AMT_DAO_QueryBuilder {
 	public final Schema.sObjectType sObjectType;
-
-	public final Schema.DescribeSObjectResult sObjectDescribe;
 
 	private final AMT_DAO_ConditionBuilder conditionBuilder;
 
@@ -19,10 +14,13 @@ public class AMT_DAO_QueryBuilder {
 
 	public Boolean nullsFirst {get;set;}
 
+	public Integer recordsLimit {get; private set;}
+
+	public Integer recordsOffset {get;private set;}
+
 	public AMT_DAO_QueryBuilder(Schema.sObjectType sObjectType) {
 		this.sObjectType = sObjectType;
-		this.sObjectDescribe = this.sObjectType.getDescribe();
-		this.queryFields = initializeQueryFields(this.sObjectDescribe);
+		this.queryFields = initializeQueryFields(this.sObjectType.getDescribe());
 		this.conditionBuilder = AMT_DAO_ServiceProvider.getConditionBuilder();
 		this.orderByFields = new List<String>();
 		this.nullsFirst = true;		
@@ -30,19 +28,26 @@ public class AMT_DAO_QueryBuilder {
 
 	public AMT_DAO_QueryBuilder(Schema.sObjectType sObjectType, List<String> fieldsNames) {
 		this(sObjectType);
-		this.queryFields = initializeQueryFields(this.sObjectDescribe,fieldsNames);
+		this.queryFields = initializeQueryFields(this.sObjectType.getDescribe(),fieldsNames);
 	}
 
 	private Map<String,Schema.SObjectField> initializeQueryFields(Schema.DescribeSObjectResult objectDescribe){
 		return objectDescribe.fields.getMap();
 	}
 
+	/*
+	* Need to check correctness of solution. We are trying to process every field to check if it is
+	* relation field and if yes return direct field name. Ex. Account.Name => AccountID, example__r.Name => example__c.
+	* It's means that if we query two fields from this same relation we have two pairs of 
+	* <Account.Name,AccountId> <Account.CreatedDate,AccountId> where AccountId is reference on this same object. 
+	*/
 	private Map<String,Schema.SObjectField> initializeQueryFields(Schema.DescribeSObjectResult objectDescribe,List<String> fieldsNames){
 		Map<String,Schema.SObjectField> fields = initializeQueryFields(objectDescribe);
-		Map<String,Schema.SObjectField> filteredFields = new Map<String,Schema.SObjectField>();
+		Map<String,Schema.SObjectField> filteredFields = new Map<String,Schema.SObjectField>();			
 		for(String fieldName:fieldsNames){
-			if(fields.containsKey(fieldName)){
-				filteredFields.put(fieldName,fields.get(fieldName));
+			String processedField = getFieldByRelationName(fieldName);
+			if(fields.containsKey(processedField)){
+				filteredFields.put(fieldName,fields.get(processedField));
 			}else{
 				throw new AMT_DAO_QueryException(fieldName+' not presented in sObject. ');
 			}
@@ -50,30 +55,58 @@ public class AMT_DAO_QueryBuilder {
 		return filteredFields;
 	}
 
+	private String getFieldByRelationName(String field){
+		if(field.contains('.')){
+			System.debug(field);
+			String[] fields = field.split('\\.');
+			System.debug(fields);
+			return fields[0].contains('__r') ? fields[0].replace('__r','__c') : fields[0]+'Id';
+		}else{
+			return field;
+		}
+	}
+
 	public String getWhereCondition(){
-		return this.conditionBuilder.evaluate();
+		return ' WHERE '+this.conditionBuilder.evaluate();
+	}
+
+	public String getOrderBy(){
+		return (orderByFields.isEmpty() ? '' : 
+			' ORDER BY ' +String.join(orderByFields,',')+ ' NULLS'+ (nullsFirst ? ' FIRST' : 'LAST'));
+	}
+
+	public String getSelectedFields(){	
+		return 'SELECT '+String.join(new List<String>(queryFields.keySet()),',');
 	}
 
 	public String getQuery(){
+		String selectedFields = getSelectedFields();
 		String whereCondition = getWhereCondition();
-		List<String> fieldList = new List<String>(queryFields.keySet());
-		String finalQuery = 'SELECT '+
-				String.join(new List<String>(queryFields.keySet()),',')+' '+
-				' FROM '+sObjectType.getDescribe().getName()+
-				(String.isNotBlank(whereCondition) ? ' WHERE '+whereCondition : ' ');
-		finalQuery+= orderByFields.isEmpty() ? '' : 
-			' ORDER BY ' +String.join(orderByFields,',')+ ' NULLS'+ (nullsFirst ? ' FIRST' : 'LAST');
-		finalQuery += 'sad';
-			
-		return finalQuery.trim();
+		String orderByClause = getOrderBy();
+	
+		String finalQuery = selectedFields +' FROM '+sObjectType.getDescribe().getName();
+		finalQuery += (String.isNotBlank(whereCondition) ? whereCondition : '');
+		finalQuery += (String.isNotBlank(orderByClause) ? orderByClause : '');				
+		finalQuery += (recordsLimit != null ? ' LIMIT '+String.valueOf(recordsLimit) : '');	
+		finalQuery += (recordsoFFSET != null ? ' OFFSET '+String.valueOf(recordsOffset) : '');	
+		return finalQuery.trim(); 
 	}
 
 	public AMT_DAO_QueryBuilder orderBy(String fieldName,AMT_DAO_Order order){
 		if(queryFields.containsKey(fieldName)){
 			orderByFields.add(fieldName+(order != null ? ' '+ order.name().remove('_ORDER') :''));
 		}
-		
 		return this;		
+	}
+
+	public AMT_DAO_QueryBuilder makeLimit(Integer limitValue){
+		recordsLimit = limitValue;
+		return this;
+	}
+
+	public AMT_DAO_QueryBuilder makeOffset(Integer offsetValue){
+		recordsOffset = offsetValue;
+		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeAnd(){
