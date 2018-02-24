@@ -1,4 +1,4 @@
-public class AMT_DAO_QueryBuilder {
+public virtual class AMT_DAO_QueryBuilder {
 	public final Schema.sObjectType sObjectType;
 
 	private final AMT_DAO_ConditionBuilder conditionBuilder;
@@ -18,7 +18,10 @@ public class AMT_DAO_QueryBuilder {
 
 	public Integer recordsOffset {get;private set;}
 
+	public List<AMT_DAO_SubQueryBuilder> subQueries{get;set;}
+
 	public AMT_DAO_QueryBuilder(Schema.sObjectType sObjectType) {
+		this.subQueries = new List<AMT_DAO_SubQueryBuilder>();
 		this.sObjectType = sObjectType;
 		this.queryFields = initializeQueryFields(this.sObjectType.getDescribe());
 		this.conditionBuilder = AMT_DAO_ServiceProvider.getConditionBuilder();
@@ -28,6 +31,9 @@ public class AMT_DAO_QueryBuilder {
 
 	public AMT_DAO_QueryBuilder(Schema.sObjectType sObjectType, List<String> fieldsNames) {
 		this(sObjectType);
+		if(fieldsNames == null || fieldsNames.isEmpty()){
+			fieldsNames = new List<String>{'ID'};
+		}
 		this.queryFields = initializeQueryFields(this.sObjectType.getDescribe(),fieldsNames);
 	}
 
@@ -56,39 +62,56 @@ public class AMT_DAO_QueryBuilder {
 	}
 
 	private String getFieldByRelationName(String field){
-		if(field.contains('.')){
-			System.debug(field);
-			String[] fields = field.split('\\.');
-			System.debug(fields);
+		if(field.contains('.')){			
+			String[] fields = field.split('\\.');			
 			return fields[0].contains('__r') ? fields[0].replace('__r','__c') : fields[0]+'Id';
 		}else{
 			return field;
 		}
 	}
 
+	private String getSubQueries(){		
+		if(subQueries.size() == 0){
+			return '';
+		}
+
+		String joinedSubQueries = ',';
+		for(AMT_DAO_SubQueryBuilder subQuery : subQueries){
+			joinedSubQueries+='('+subQuery.getQuery()+'),';
+		}
+		joinedSubQueries = joinedSubQueries.removeEnd(',');
+		return joinedSubQueries;
+	}
+
 	public String getWhereCondition(){
-		return ' WHERE '+this.conditionBuilder.evaluate();
+		if(conditionBuilder == null){
+			return null;
+		}
+		return this.conditionBuilder.evaluate();
 	}
 
 	public String getOrderBy(){
+		if(orderByFields == null){
+			return null;
+		}
 		return (orderByFields.isEmpty() ? '' : 
-			' ORDER BY ' +String.join(orderByFields,',')+ ' NULLS'+ (nullsFirst ? ' FIRST' : 'LAST'));
+			String.join(orderByFields,',')+ ' NULLS'+ (nullsFirst ? ' FIRST' : 'LAST'));
 	}
 
 	public String getSelectedFields(){	
 		return 'SELECT '+String.join(new List<String>(queryFields.keySet()),',');
 	}
 
-	public String getQuery(){
+	public virtual String getQuery(){
 		String selectedFields = getSelectedFields();
 		String whereCondition = getWhereCondition();
 		String orderByClause = getOrderBy();
 	
-		String finalQuery = selectedFields +' FROM '+sObjectType.getDescribe().getName();
-		finalQuery += (String.isNotBlank(whereCondition) ? whereCondition : '');
-		finalQuery += (String.isNotBlank(orderByClause) ? orderByClause : '');				
+		String finalQuery = selectedFields+getSubQueries()+' FROM '+sObjectType.getDescribe().getName();
+		finalQuery += (String.isNotBlank(whereCondition) ? ' WHERE '+whereCondition : '');
+		finalQuery += (String.isNotBlank(orderByClause) ? ' ORDER BY '+orderByClause : '');				
 		finalQuery += (recordsLimit != null ? ' LIMIT '+String.valueOf(recordsLimit) : '');	
-		finalQuery += (recordsoFFSET != null ? ' OFFSET '+String.valueOf(recordsOffset) : '');	
+		finalQuery += (recordsOffset != null ? ' OFFSET '+String.valueOf(recordsOffset) : '');	
 		return finalQuery.trim(); 
 	}
 
@@ -110,527 +133,703 @@ public class AMT_DAO_QueryBuilder {
 	}
 
 	public AMT_DAO_QueryBuilder makeAnd(){
-		this.conditionBuilder.andCondition();
+		if(conditionBuilder != null){
+			this.conditionBuilder.andCondition();
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeOr(){
-		this.conditionBuilder.orCondition();
+		if(conditionBuilder != null){
+			conditionBuilder.orCondition();	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNot(){
-		this.conditionBuilder.notCondition();
+		if(conditionBuilder != null){
+			conditionBuilder.notCondition();	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeEq(String fieldName,String value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.EQ,fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.EQ,fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeEq(String fieldName,Integer value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeEq(String fieldName,Boolean value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeEq(String fieldName,Decimal value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeEq(String fieldName,Double value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeEq(String fieldName,Long value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeEq(String fieldName,DateTime value,String timeZone){
-		this.conditionBuilder.condition
-				(AMT_DAO_Operator.EQ,fieldName,value,timeZone);
+		if(conditionBuilder != null){
+			conditionBuilder.condition
+				(AMT_DAO_Operator.EQ,fieldName,value,timeZone);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeEq(String fieldName,Date value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeEq(String fieldName,Object value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeEq(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.EQ,
-				dateFunction,additionalValue);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.EQ,
+				dateFunction,additionalValue);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeEq(AMT_DAO_DateFunction dateFunction,Date additionalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.EQ,
-				dateFunction,additionalValue);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.EQ,
+				dateFunction,additionalValue);	
+		}
 		return this;
 	}
 
 
 	public AMT_DAO_QueryBuilder makeEq(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.EQ,
 				fieldName,literalValue);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,String value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,Integer value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,Boolean value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,Decimal value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,Double value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,Long value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,Date value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,Object value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,DateTime value,String timeZone){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				fieldName,value,timeZone);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotEq(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
-				fieldName,literalValue);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
+				fieldName,literalValue);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotEq(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
-				dateFunction,additionalValue);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
+				dateFunction,additionalValue);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotEq(AMT_DAO_DateFunction dateFunction,Date additionalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				dateFunction,additionalValue);
+		}		
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLt(String fieldName,String value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLt(String fieldName,Integer value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLt(String fieldName,Decimal value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLt(String fieldName,Double value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLt(String fieldName,Long value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLt(String fieldName,Date value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLt(String fieldName,Object value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLt(String fieldName,DateTime value,String timeZone){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value,timeZone);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLt(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,literalValue);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLt(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT,
-				dateFunction,additionalValue);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT,
+				dateFunction,additionalValue);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLt(AMT_DAO_DateFunction dateFunction,Date additionalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				dateFunction,additionalValue);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,String value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value);
+		}		
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,Integer value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value);
+		}		
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,Decimal value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,Double value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,Long value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,Date value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,Object value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,DateTime value,String timeZone){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value,timeZone);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,literalValue);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLtOrEq(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				dateFunction,additionalValue);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLtOrEq(AMT_DAO_DateFunction dateFunction,Date additionalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				dateFunction,additionalValue);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGt(String fieldName,String value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGt(String fieldName,Integer value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGt(String fieldName,Decimal value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGt(String fieldName,Double value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGt(String fieldName,Long value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGt(String fieldName,Date value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGt(String fieldName,Object value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGt(String fieldName,DateTime value,String timeZone){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value,timeZone);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGt(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,literalValue);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGt(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT,
-				dateFunction,additionalValue);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT,
+				dateFunction,additionalValue);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGt(AMT_DAO_DateFunction dateFunction,Date additionalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				dateFunction,additionalValue);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,String value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,Integer value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,Decimal value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,Double value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,Long value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,Date value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
-				fieldName,value);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
+				fieldName,value);	
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,Object value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,value);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,DateTime value,String timeZone){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,value,timeZone);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,literalValue);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGtOrEq(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				dateFunction,additionalValue);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeGtOrEq(AMT_DAO_DateFunction dateFunction,Date additionalValue){
-		this.conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				dateFunction,additionalValue);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeLike(String fieldName,String value){
-		this.conditionBuilder.condition(AMT_DAO_Operator.LIKE_EXP,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.LIKE_EXP,
 				fieldName,value);
+		}		
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeIn(String fieldName,List<String> values){
-		this.conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
 				fieldName,values);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeIn(String fieldName,List<Integer> values){
-		this.conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
 				fieldName,values);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeIn(String fieldName,List<Decimal> values){
-		this.conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
 				fieldName,values);
+		}
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeIn(String fieldName,List<Double> values){
-		this.conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
-				fieldName,values);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
+				fieldName,values);	
+		}		
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeIn(String fieldName,List<Long> values){
-		this.conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
 				fieldName,values);
+		}		
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeIn(String fieldName,List<Date> values){
-		this.conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
 				fieldName,values);
+		}				
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeIn(String fieldName,List<Object> values){
-		this.conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
 				fieldName,values);
+		}		
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotIn(String fieldName,List<String> values){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
 				fieldName,values);
+		}		
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotIn(String fieldName,List<Integer> values){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
 				fieldName,values);
+		}	
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotIn(String fieldName,List<Decimal> values){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
 				fieldName,values);
+		}		
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotIn(String fieldName,List<Double> values){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
 				fieldName,values);
+		}		
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotIn(String fieldName,List<Long> values){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
-				fieldName,values);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
+				fieldName,values);	
+		}		
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotIn(String fieldName,List<Date> values){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
-				fieldName,values);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
+				fieldName,values);	
+		}		
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeNotIn(String fieldName,List<Object> values){
-		this.conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
-				fieldName,values);
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
+				fieldName,values);	
+		}		
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeIncludes(String fieldName,List<String> values){
-		this.conditionBuilder.condition(
+		if(conditionBuilder != null){
+			conditionBuilder.condition(
 				AMT_DAO_Operator.INCLUDES_EXP,fieldName,values);
+		}		
 		return this;
 	}
 
 	public AMT_DAO_QueryBuilder makeExcludes(String fieldName,List<String> values){
-		this.conditionBuilder.condition(
+		if(conditionBuilder != null){
+			conditionBuilder.condition(
 				AMT_DAO_Operator.EXCLUDES_EXP,fieldName,values);
+		}		
 		return this;
 	}
 }

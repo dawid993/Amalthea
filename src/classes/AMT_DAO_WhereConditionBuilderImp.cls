@@ -14,7 +14,11 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 	}
 
 	public String evaluate(){
-		return structureManager.getRootNode().evaluate();
+		if(structureManager != null && structureManager.getRootNode() != null){
+			return structureManager.getRootNode().evaluate();
+		}else{
+			return null;
+		}
 	}
 
 	public Boolean condition(AMT_DAO_Operator operator,String fieldName,String value){
