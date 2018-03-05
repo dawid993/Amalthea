@@ -1,4 +1,4 @@
-public enum AMT_DAO_DateLiteral{
+global enum AMT_DAO_DateLiteral{
 		YESTERDAY,
 		TODAY,
 		TOMORROW,

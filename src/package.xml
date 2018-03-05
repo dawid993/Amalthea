@@ -21,6 +21,8 @@
         <members>AMT_DAO_WhereConditionBuilderImp</members>
         <members>AMT_DAO_WhereConditionBuilderTest</members>
         <members>ATM_DAO_Order</members>
+        <members>AMT_DAO_Query</members>
+        <members>AMT_DAO_SelectSubQuery</members>
         <name>ApexClass</name>
     </types>
     <types>

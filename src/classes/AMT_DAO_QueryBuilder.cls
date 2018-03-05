@@ -1,45 +1,64 @@
-public virtual class AMT_DAO_QueryBuilder {
-	public final Schema.sObjectType sObjectType;
+global virtual class AMT_DAO_QueryBuilder implements AMT_DAO_Query{		
 
-	private final AMT_DAO_ConditionBuilder conditionBuilder;
+	public Schema.sObjectType sObjectType{public get; private set;}
 
-	public Map<String,Schema.SObjectField> queryFields{
+	private AMT_DAO_ConditionBuilder conditionBuilder;
+
+	global Map<String,Schema.SObjectField> queryFields{
 		private set;
-		public get {
+		global get {
 			return queryFields.clone();
 		}
 	}
 
 	private List<String> orderByFields;
 
-	public Boolean nullsFirst {get;set;}
+	global Boolean nullsFirst {get;set;}
 
-	public Integer recordsLimit {get; private set;}
+	global Integer recordsLimit {get; private set;}
 
-	public Integer recordsOffset {get;private set;}
+	global Integer recordsOffset {get;private set;}	
 
-	public List<AMT_DAO_SubQueryBuilder> subQueries{get;set;}
+	global List<AMT_DAO_SelectSubQuery> subQueries{get;set;}
 
-	public AMT_DAO_QueryBuilder(Schema.sObjectType sObjectType) {
-		this.subQueries = new List<AMT_DAO_SubQueryBuilder>();
-		this.sObjectType = sObjectType;
+	public AMT_DAO_QueryBuilder(){
+
+	}
+ 
+	global AMT_DAO_QueryBuilder(Schema.sObjectType sObjectType) {
+		init(SObjectType);
+	}
+
+	global AMT_DAO_QueryBuilder(Schema.sObjectType sObjectType, List<String> fieldsNames) {
+		this(sObjectType);
+		setSelectFields(fieldsNames);		
+	}
+
+	protected void init(SObjectType type){
+		this.subQueries = new List<AMT_DAO_SelectSubQuery>();
+		this.sObjectType = type;
 		this.queryFields = initializeQueryFields(this.sObjectType.getDescribe());
 		this.conditionBuilder = AMT_DAO_ServiceProvider.getConditionBuilder();
 		this.orderByFields = new List<String>();
 		this.nullsFirst = true;		
 	}
 
-	public AMT_DAO_QueryBuilder(Schema.sObjectType sObjectType, List<String> fieldsNames) {
-		this(sObjectType);
-		if(fieldsNames == null || fieldsNames.isEmpty()){
-			fieldsNames = new List<String>{'ID'};
+	protected void setSelectFields(List<String> fieldNames){
+		if(fieldNames == null || fieldNames.isEmpty()){
+			fieldNames = new List<String>{'ID'};
 		}
-		this.queryFields = initializeQueryFields(this.sObjectType.getDescribe(),fieldsNames);
+
+		if(sObjectType == null){
+			return;
+		}
+
+		this.queryFields = initializeQueryFields(this.sObjectType.getDescribe(),fieldNames);
 	}
 
 	private Map<String,Schema.SObjectField> initializeQueryFields(Schema.DescribeSObjectResult objectDescribe){
 		return objectDescribe.fields.getMap();
 	}
+
 
 	/*
 	* Need to check correctness of solution. We are trying to process every field to check if it is
@@ -76,21 +95,21 @@ public virtual class AMT_DAO_QueryBuilder {
 		}
 
 		String joinedSubQueries = ',';
-		for(AMT_DAO_SubQueryBuilder subQuery : subQueries){
+		for(AMT_DAO_Query subQuery : subQueries){
 			joinedSubQueries+='('+subQuery.getQuery()+'),';
 		}
 		joinedSubQueries = joinedSubQueries.removeEnd(',');
 		return joinedSubQueries;
 	}
 
-	public String getWhereCondition(){
+	global String getWhereCondition(){
 		if(conditionBuilder == null){
 			return null;
 		}
 		return this.conditionBuilder.evaluate();
 	}
 
-	public String getOrderBy(){
+	global String getOrderBy(){
 		if(orderByFields == null){
 			return null;
 		}
@@ -98,11 +117,12 @@ public virtual class AMT_DAO_QueryBuilder {
 			String.join(orderByFields,',')+ ' NULLS'+ (nullsFirst ? ' FIRST' : 'LAST'));
 	}
 
-	public String getSelectedFields(){	
+	global String getSelectedFields(){	
+		System.debug(queryFields);
 		return 'SELECT '+String.join(new List<String>(queryFields.keySet()),',');
 	}
 
-	public virtual String getQuery(){
+	global virtual String getQuery(){
 		String selectedFields = getSelectedFields();
 		String whereCondition = getWhereCondition();
 		String orderByClause = getOrderBy();
@@ -115,52 +135,52 @@ public virtual class AMT_DAO_QueryBuilder {
 		return finalQuery.trim(); 
 	}
 
-	public AMT_DAO_QueryBuilder orderBy(String fieldName,AMT_DAO_Order order){
+	global AMT_DAO_Query orderBy(String fieldName,AMT_DAO_Order order){
 		if(queryFields.containsKey(fieldName)){
 			orderByFields.add(fieldName+(order != null ? ' '+ order.name().remove('_ORDER') :''));
 		}
 		return this;		
 	}
 
-	public AMT_DAO_QueryBuilder makeLimit(Integer limitValue){
+	global AMT_DAO_Query makeLimit(Integer limitValue){
 		recordsLimit = limitValue;
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeOffset(Integer offsetValue){
+	global AMT_DAO_Query makeOffset(Integer offsetValue){
 		recordsOffset = offsetValue;
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeAnd(){
+	global AMT_DAO_Query makeAnd(){
 		if(conditionBuilder != null){
 			this.conditionBuilder.andCondition();
 		}
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeOr(){
+	global AMT_DAO_Query makeOr(){
 		if(conditionBuilder != null){
 			conditionBuilder.orCondition();	
 		}
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNot(){
+	global AMT_DAO_Query makeNot(){
 		if(conditionBuilder != null){
 			conditionBuilder.notCondition();	
 		}
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeEq(String fieldName,String value){
+	global AMT_DAO_Query makeEq(String fieldName,String value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.EQ,fieldName,value);	
 		}
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeEq(String fieldName,Integer value){
+	global AMT_DAO_Query makeEq(String fieldName,Integer value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.EQ,
 				fieldName,value);	
@@ -168,7 +188,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeEq(String fieldName,Boolean value){
+	global AMT_DAO_Query makeEq(String fieldName,Boolean value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.EQ,
 				fieldName,value);	
@@ -176,7 +196,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeEq(String fieldName,Decimal value){
+	global AMT_DAO_Query makeEq(String fieldName,Decimal value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.EQ,
 				fieldName,value);	
@@ -184,7 +204,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeEq(String fieldName,Double value){
+	global AMT_DAO_Query makeEq(String fieldName,Double value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.EQ,
 				fieldName,value);	
@@ -192,7 +212,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeEq(String fieldName,Long value){
+	global AMT_DAO_Query makeEq(String fieldName,Long value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.EQ,
 				fieldName,value);	
@@ -200,7 +220,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeEq(String fieldName,DateTime value,String timeZone){
+	global AMT_DAO_Query makeEq(String fieldName,DateTime value,String timeZone){
 		if(conditionBuilder != null){
 			conditionBuilder.condition
 				(AMT_DAO_Operator.EQ,fieldName,value,timeZone);	
@@ -208,7 +228,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeEq(String fieldName,Date value){
+	global AMT_DAO_Query makeEq(String fieldName,Date value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.EQ,
 				fieldName,value);	
@@ -216,7 +236,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeEq(String fieldName,Object value){
+	global AMT_DAO_Query makeEq(String fieldName,Object value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.EQ,
 				fieldName,value);	
@@ -224,7 +244,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeEq(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
+	global AMT_DAO_Query makeEq(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.EQ,
 				dateFunction,additionalValue);	
@@ -232,7 +252,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeEq(AMT_DAO_DateFunction dateFunction,Date additionalValue){
+	global AMT_DAO_Query makeEq(AMT_DAO_DateFunction dateFunction,Date additionalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.EQ,
 				dateFunction,additionalValue);	
@@ -241,7 +261,7 @@ public virtual class AMT_DAO_QueryBuilder {
 	}
 
 
-	public AMT_DAO_QueryBuilder makeEq(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
+	global AMT_DAO_Query makeEq(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.EQ,
 				fieldName,literalValue);
@@ -249,7 +269,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,String value){
+	global AMT_DAO_Query makeNotEq(String fieldName,String value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				fieldName,value);	
@@ -257,7 +277,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,Integer value){
+	global AMT_DAO_Query makeNotEq(String fieldName,Integer value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				fieldName,value);	
@@ -265,7 +285,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,Boolean value){
+	global AMT_DAO_Query makeNotEq(String fieldName,Boolean value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				fieldName,value);	
@@ -273,7 +293,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,Decimal value){
+	global AMT_DAO_Query makeNotEq(String fieldName,Decimal value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				fieldName,value);	
@@ -281,7 +301,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,Double value){
+	global AMT_DAO_Query makeNotEq(String fieldName,Double value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				fieldName,value);	
@@ -289,7 +309,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,Long value){
+	global AMT_DAO_Query makeNotEq(String fieldName,Long value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				fieldName,value);
@@ -297,7 +317,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,Date value){
+	global AMT_DAO_Query makeNotEq(String fieldName,Date value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				fieldName,value);
@@ -305,7 +325,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,Object value){
+	global AMT_DAO_Query makeNotEq(String fieldName,Object value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				fieldName,value);	
@@ -313,7 +333,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotEq(String fieldName,DateTime value,String timeZone){
+	global AMT_DAO_Query makeNotEq(String fieldName,DateTime value,String timeZone){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				fieldName,value,timeZone);
@@ -321,7 +341,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotEq(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
+	global AMT_DAO_Query makeNotEq(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				fieldName,literalValue);	
@@ -329,7 +349,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotEq(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
+	global AMT_DAO_Query makeNotEq(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				dateFunction,additionalValue);	
@@ -337,7 +357,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotEq(AMT_DAO_DateFunction dateFunction,Date additionalValue){
+	global AMT_DAO_Query makeNotEq(AMT_DAO_DateFunction dateFunction,Date additionalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_EQ,
 				dateFunction,additionalValue);
@@ -345,7 +365,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLt(String fieldName,String value){
+	global AMT_DAO_Query makeLt(String fieldName,String value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value);
@@ -353,7 +373,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLt(String fieldName,Integer value){
+	global AMT_DAO_Query makeLt(String fieldName,Integer value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value);
@@ -361,7 +381,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLt(String fieldName,Decimal value){
+	global AMT_DAO_Query makeLt(String fieldName,Decimal value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value);
@@ -369,7 +389,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLt(String fieldName,Double value){
+	global AMT_DAO_Query makeLt(String fieldName,Double value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value);
@@ -377,7 +397,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLt(String fieldName,Long value){
+	global AMT_DAO_Query makeLt(String fieldName,Long value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value);
@@ -385,7 +405,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLt(String fieldName,Date value){
+	global AMT_DAO_Query makeLt(String fieldName,Date value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value);
@@ -393,7 +413,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLt(String fieldName,Object value){
+	global AMT_DAO_Query makeLt(String fieldName,Object value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value);	
@@ -401,7 +421,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLt(String fieldName,DateTime value,String timeZone){
+	global AMT_DAO_Query makeLt(String fieldName,DateTime value,String timeZone){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,value,timeZone);
@@ -409,7 +429,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLt(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
+	global AMT_DAO_Query makeLt(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				fieldName,literalValue);
@@ -417,7 +437,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLt(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
+	global AMT_DAO_Query makeLt(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				dateFunction,additionalValue);	
@@ -425,7 +445,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLt(AMT_DAO_DateFunction dateFunction,Date additionalValue){
+	global AMT_DAO_Query makeLt(AMT_DAO_DateFunction dateFunction,Date additionalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT,
 				dateFunction,additionalValue);
@@ -433,7 +453,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,String value){
+	global AMT_DAO_Query makeLtOrEq(String fieldName,String value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value);
@@ -441,7 +461,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,Integer value){
+	global AMT_DAO_Query makeLtOrEq(String fieldName,Integer value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value);
@@ -449,7 +469,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,Decimal value){
+	global AMT_DAO_Query makeLtOrEq(String fieldName,Decimal value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value);
@@ -457,7 +477,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,Double value){
+	global AMT_DAO_Query makeLtOrEq(String fieldName,Double value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value);
@@ -465,7 +485,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,Long value){
+	global AMT_DAO_Query makeLtOrEq(String fieldName,Long value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value);
@@ -473,7 +493,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,Date value){
+	global AMT_DAO_Query makeLtOrEq(String fieldName,Date value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value);
@@ -481,7 +501,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,Object value){
+	global AMT_DAO_Query makeLtOrEq(String fieldName,Object value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value);
@@ -489,7 +509,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName,DateTime value,String timeZone){
+	global AMT_DAO_Query makeLtOrEq(String fieldName,DateTime value,String timeZone){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,value,timeZone);
@@ -497,7 +517,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLtOrEq(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
+	global AMT_DAO_Query makeLtOrEq(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				fieldName,literalValue);
@@ -505,7 +525,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLtOrEq(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
+	global AMT_DAO_Query makeLtOrEq(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				dateFunction,additionalValue);
@@ -513,7 +533,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLtOrEq(AMT_DAO_DateFunction dateFunction,Date additionalValue){
+	global AMT_DAO_Query makeLtOrEq(AMT_DAO_DateFunction dateFunction,Date additionalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LT_OR_EQ,
 				dateFunction,additionalValue);
@@ -521,7 +541,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGt(String fieldName,String value){
+	global AMT_DAO_Query makeGt(String fieldName,String value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value);
@@ -529,7 +549,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGt(String fieldName,Integer value){
+	global AMT_DAO_Query makeGt(String fieldName,Integer value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value);
@@ -537,7 +557,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGt(String fieldName,Decimal value){
+	global AMT_DAO_Query makeGt(String fieldName,Decimal value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value);
@@ -545,7 +565,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGt(String fieldName,Double value){
+	global AMT_DAO_Query makeGt(String fieldName,Double value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value);
@@ -553,7 +573,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGt(String fieldName,Long value){
+	global AMT_DAO_Query makeGt(String fieldName,Long value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value);
@@ -561,7 +581,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGt(String fieldName,Date value){
+	global AMT_DAO_Query makeGt(String fieldName,Date value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value);
@@ -569,7 +589,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGt(String fieldName,Object value){
+	global AMT_DAO_Query makeGt(String fieldName,Object value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value);
@@ -577,7 +597,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGt(String fieldName,DateTime value,String timeZone){
+	global AMT_DAO_Query makeGt(String fieldName,DateTime value,String timeZone){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,value,timeZone);
@@ -585,7 +605,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGt(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
+	global AMT_DAO_Query makeGt(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				fieldName,literalValue);
@@ -593,7 +613,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGt(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
+	global AMT_DAO_Query makeGt(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				dateFunction,additionalValue);	
@@ -601,7 +621,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGt(AMT_DAO_DateFunction dateFunction,Date additionalValue){
+	global AMT_DAO_Query makeGt(AMT_DAO_DateFunction dateFunction,Date additionalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT,
 				dateFunction,additionalValue);
@@ -609,7 +629,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,String value){
+	global AMT_DAO_Query makeGtOrEq(String fieldName,String value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,value);
@@ -617,7 +637,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,Integer value){
+	global AMT_DAO_Query makeGtOrEq(String fieldName,Integer value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,value);	
@@ -625,7 +645,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,Decimal value){
+	global AMT_DAO_Query makeGtOrEq(String fieldName,Decimal value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,value);
@@ -633,7 +653,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,Double value){
+	global AMT_DAO_Query makeGtOrEq(String fieldName,Double value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,value);
@@ -641,7 +661,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,Long value){
+	global AMT_DAO_Query makeGtOrEq(String fieldName,Long value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,value);
@@ -649,7 +669,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,Date value){
+	global AMT_DAO_Query makeGtOrEq(String fieldName,Date value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,value);	
@@ -657,7 +677,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,Object value){
+	global AMT_DAO_Query makeGtOrEq(String fieldName,Object value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,value);
@@ -665,7 +685,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName,DateTime value,String timeZone){
+	global AMT_DAO_Query makeGtOrEq(String fieldName,DateTime value,String timeZone){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,value,timeZone);
@@ -673,7 +693,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGtOrEq(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
+	global AMT_DAO_Query makeGtOrEq(String fieldName, AMT_DAO_DateLiteralEvaluator literalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				fieldName,literalValue);
@@ -681,7 +701,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGtOrEq(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
+	global AMT_DAO_Query makeGtOrEq(AMT_DAO_DateFunction dateFunction,Integer additionalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				dateFunction,additionalValue);
@@ -689,7 +709,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeGtOrEq(AMT_DAO_DateFunction dateFunction,Date additionalValue){
+	global AMT_DAO_Query makeGtOrEq(AMT_DAO_DateFunction dateFunction,Date additionalValue){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.GT_OR_EQ,
 				dateFunction,additionalValue);
@@ -697,7 +717,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeLike(String fieldName,String value){
+	global AMT_DAO_Query makeLike(String fieldName,String value){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.LIKE_EXP,
 				fieldName,value);
@@ -705,7 +725,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeIn(String fieldName,List<String> values){
+	global AMT_DAO_Query makeIn(String fieldName,List<String> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
 				fieldName,values);
@@ -713,7 +733,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeIn(String fieldName,List<Integer> values){
+	global AMT_DAO_Query makeIn(String fieldName,List<Integer> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
 				fieldName,values);
@@ -721,7 +741,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeIn(String fieldName,List<Decimal> values){
+	global AMT_DAO_Query makeIn(String fieldName,List<Decimal> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
 				fieldName,values);
@@ -729,7 +749,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeIn(String fieldName,List<Double> values){
+	global AMT_DAO_Query makeIn(String fieldName,List<Double> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
 				fieldName,values);	
@@ -737,7 +757,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeIn(String fieldName,List<Long> values){
+	global AMT_DAO_Query makeIn(String fieldName,List<Long> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
 				fieldName,values);
@@ -745,7 +765,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeIn(String fieldName,List<Date> values){
+	global AMT_DAO_Query makeIn(String fieldName,List<Date> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
 				fieldName,values);
@@ -753,7 +773,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeIn(String fieldName,List<Object> values){
+	global AMT_DAO_Query makeIn(String fieldName,List<Object> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
 				fieldName,values);
@@ -761,7 +781,15 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotIn(String fieldName,List<String> values){
+	global AMT_DAO_Query makeIn(String fieldName,AMT_DAO_Query subQuery){
+		if(conditionBuilder != null){
+			conditionBuilder.condition(AMT_DAO_Operator.IN_EXP,
+				fieldName,subQuery);
+		}
+		return this;
+	}
+
+	global AMT_DAO_Query makeNotIn(String fieldName,List<String> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
 				fieldName,values);
@@ -769,7 +797,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotIn(String fieldName,List<Integer> values){
+	global AMT_DAO_Query makeNotIn(String fieldName,List<Integer> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
 				fieldName,values);
@@ -777,7 +805,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotIn(String fieldName,List<Decimal> values){
+	global AMT_DAO_Query makeNotIn(String fieldName,List<Decimal> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
 				fieldName,values);
@@ -785,7 +813,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotIn(String fieldName,List<Double> values){
+	global AMT_DAO_Query makeNotIn(String fieldName,List<Double> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
 				fieldName,values);
@@ -793,7 +821,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotIn(String fieldName,List<Long> values){
+	global AMT_DAO_Query makeNotIn(String fieldName,List<Long> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
 				fieldName,values);	
@@ -801,7 +829,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotIn(String fieldName,List<Date> values){
+	global AMT_DAO_Query makeNotIn(String fieldName,List<Date> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
 				fieldName,values);	
@@ -809,7 +837,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeNotIn(String fieldName,List<Object> values){
+	global AMT_DAO_Query makeNotIn(String fieldName,List<Object> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(AMT_DAO_Operator.NOT_IN,
 				fieldName,values);	
@@ -817,7 +845,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeIncludes(String fieldName,List<String> values){
+	global AMT_DAO_Query makeIncludes(String fieldName,List<String> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(
 				AMT_DAO_Operator.INCLUDES_EXP,fieldName,values);
@@ -825,7 +853,7 @@ public virtual class AMT_DAO_QueryBuilder {
 		return this;
 	}
 
-	public AMT_DAO_QueryBuilder makeExcludes(String fieldName,List<String> values){
+	global AMT_DAO_Query makeExcludes(String fieldName,List<String> values){
 		if(conditionBuilder != null){
 			conditionBuilder.condition(
 				AMT_DAO_Operator.EXCLUDES_EXP,fieldName,values);

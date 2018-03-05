@@ -109,6 +109,10 @@ public class AMT_DAO_WhereConditionBuilderImp implements AMT_DAO_ConditionBuilde
 		return this.insertNode(getConditionNode(operator,dateFunction,additionalValue));
 	}
 
+	public Boolean condition(AMT_DAO_Operator operator,String fieldName,AMT_DAO_QueryBuilder subQuery){	
+		return this.insertNode(getConditionNode(operator,fieldName,'('+subQuery.getQuery()+')'));
+	}
+
 	public Boolean andCondition(){
 		return this.insertNode(getLogicalNode(AMT_DAO_Operator.AND_EXP));
 	}

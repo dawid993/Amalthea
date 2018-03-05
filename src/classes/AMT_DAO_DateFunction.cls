@@ -1,8 +1,8 @@
-public with sharing class AMT_DAO_DateFunction {
+global with sharing class AMT_DAO_DateFunction {
 	private DateFunctions dateFunction;
 	private String fieldName;
 
-	public AMT_DAO_DateFunction(DateFunctions dateFunction,String fieldName) {
+	global AMT_DAO_DateFunction(DateFunctions dateFunction,String fieldName) {
 		this.dateFunction =	dateFunction;
 		this.fieldName = fieldName;
 	}
@@ -11,7 +11,7 @@ public with sharing class AMT_DAO_DateFunction {
 		return dateFunction.name() +'('+fieldName+')';
 	}
 
-	public enum DateFunctions{
+	global enum DateFunctions{
 		CALENDAR_MONTH,
 		CALENDAR_QUARTER,
 		CALENDAR_YEAR,
