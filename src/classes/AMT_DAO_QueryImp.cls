@@ -1,4 +1,4 @@
-global virtual class AMT_DAO_QueryBuilder implements AMT_DAO_Query{		
+global virtual class AMT_DAO_QueryImp implements AMT_DAO_Query{		
 
 	public Schema.sObjectType sObjectType{public get; private set;}
 
@@ -19,23 +19,23 @@ global virtual class AMT_DAO_QueryBuilder implements AMT_DAO_Query{
 
 	global Integer recordsOffset {get;private set;}	
 
-	global List<AMT_DAO_SelectSubQuery> subQueries{get;set;}
+	global List<AMT_DAO_Query> subQueries{get;set;}
 
-	public AMT_DAO_QueryBuilder(){
+	public AMT_DAO_QueryImp(){
 
 	}
  
-	global AMT_DAO_QueryBuilder(Schema.sObjectType sObjectType) {
+	public AMT_DAO_QueryImp(Schema.sObjectType sObjectType) {
 		init(SObjectType);
 	}
 
-	global AMT_DAO_QueryBuilder(Schema.sObjectType sObjectType, List<String> fieldsNames) {
+	public AMT_DAO_QueryImp(Schema.sObjectType sObjectType, List<String> fieldsNames) {
 		this(sObjectType);
 		setSelectFields(fieldsNames);		
-	}
+	}	
 
 	protected void init(SObjectType type){
-		this.subQueries = new List<AMT_DAO_SelectSubQuery>();
+		this.subQueries = new List<AMT_DAO_Query>();
 		this.sObjectType = type;
 		this.queryFields = initializeQueryFields(this.sObjectType.getDescribe());
 		this.conditionBuilder = AMT_DAO_ServiceProvider.getConditionBuilder();

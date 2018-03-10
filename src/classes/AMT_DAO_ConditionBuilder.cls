@@ -48,5 +48,5 @@ public interface AMT_DAO_ConditionBuilder {
 
 	Boolean condition(AMT_DAO_Operator operator,String fieldName,Object value);
 	
-	Boolean condition(AMT_DAO_Operator operator,String fieldName,AMT_DAO_QueryBuilder subQuery);
+	Boolean condition(AMT_DAO_Operator operator,String fieldName, AMT_DAO_Query subQuery);
 }

@@ -1,7 +1,7 @@
 /**
  * Created by Dawid on 2017-10-22.
  */
-global class AMT_DAO_ServiceProvider {
+public class AMT_DAO_ServiceProvider {
 
 	public static final String CONDITION_BUILDER_SETTING = 'ConditionBuilderImplementation';
 
@@ -10,13 +10,6 @@ global class AMT_DAO_ServiceProvider {
 	public static final String LOGICAL_NODE_SETTING = 'LogicalNodeImplementation';
 
 	public static final String CONDITION_NODE_SETTING = 'ConditionNodeImplementation';
-
-	global static AMT_DAO_SelectSubQuery getSelectSubQuery(sObjectType sObjectType,String relationName){
-		AMT_DAO_SelectSubQuery subQuery;
-		subQuery = (AMT_DAO_SelectSubQuery) AMT_DAO_ServiceProvider.constructObjectForService('AMT_DAO_SelectSubQueryBuilder');
-		subQuery.createSelectSubQuery(sObjectType,relationName);
-		return subQuery;
-	}	
 
 	public static AMT_DAO_ConditionBuilder getConditionBuilder(){
 		AMT_DAO_ConditionBuilder conditionBuilder;

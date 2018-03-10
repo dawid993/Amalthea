@@ -12,8 +12,7 @@
         <members>AMT_DAO_Node</members>
         <members>AMT_DAO_NodeException</members>
         <members>AMT_DAO_Operator</members>
-        <members>AMT_DAO_OperatorUtils</members>
-        <members>AMT_DAO_QueryBuilder</members>
+        <members>AMT_DAO_OperatorUtils</members>      
         <members>AMT_DAO_QueryException</members>
         <members>AMT_DAO_ServiceConstructionException</members>
         <members>AMT_DAO_ServiceProvider</members>
@@ -23,6 +22,14 @@
         <members>ATM_DAO_Order</members>
         <members>AMT_DAO_Query</members>
         <members>AMT_DAO_SelectSubQuery</members>
+        <members>AMT_DAO_CreatableQuery</members>
+        <members>AMT_DAO_QueryProviderService</members>
+        <members>AMT_DAO_ConditionSubQueryImp</members>
+        <members>AMT_DAO_Order</members>
+        <members>AMT_DAO_QueryImp</members>
+        <members>AMT_DAO_SelectSubQueryImp</members>
+        <members>AMT_DAO_ConditionBuilderStructure</members>
+        <members>FakeTestCoverage</members>
         <name>ApexClass</name>
     </types>
     <types>
